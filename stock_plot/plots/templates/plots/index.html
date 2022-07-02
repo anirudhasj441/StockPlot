@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+    <style>
+        
+    </style>
+{% endblock css %}
+{% block body %}
+    <div class="container pt-3">
+        <div class="inputs">
+            <div class="flex items-center q-gutter-x-md">
+                <div style="width: 300px;" style="position: relative;">
+                    <input v-model="search_value" placeholder="Search" class="form-control">
+                    <q-card v-if="search_results.length > 0" style="position: absolute; width: 300px; max-height: 300px; overflow-y: auto;">
+                        <q-card-section>
+                            <q-list>
+                                <q-item clickable v-ripple v-if="loading">
+                                    <q-item-section class="">
+                                        <div class="flex justify-center">
+                                            <q-spinner-facebook />
+                                        </div>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple v-for="result of search_results">
+                                    <q-item-section @click="buttonClicked(result.symbol, result.name)">[[result.name]]</q-item-section>
+                                </q-item>                            
+                            </q-list>
+                        </q-card-section>
+                    </q-card>
+                </div>
+                <div class="">
+                    <q-btn color="primary" icon="search" @click="filter(search_value)" />
+                </div>
+            </div>
+        </div>
+        <div class="q-mt-md">
+            <div id="plot"></div>
+        </div>
+    </div>
+{% endblock body %}
+{% block script %}
+    
+{% endblock script %}
