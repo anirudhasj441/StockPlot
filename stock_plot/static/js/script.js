@@ -85,10 +85,24 @@ const app = Vue.createApp({
             //   ];
               
             //   Plotly.newPlot(this.plot_container, data);
+        },
+        testApi: function(){
+            var url = "/intraday";
+            const xhr = new XMLHttpRequest();
+            xhr.open("get", url);
+            xhr.onload = function(){
+                var response = JSON.parse(xhr.response);
+                console.log(response);
+                var plot_data = [response]
+                Plotly.react(this.plot_container, plot_data)
+
+            }.bind(this)
+            xhr.send();
         }
     },
     mounted(){
         this.plot_container = document.getElementById("plot");
+        this.testApi();
     },
 })
 
