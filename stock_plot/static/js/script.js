@@ -45,7 +45,7 @@ const app = Vue.createApp({
         },
         buttonClicked: function(symbol, name){
             console.log(symbol);
-            var url = "https://alpha-vantage.p.rapidapi.com/query?interval=5min&function=TIME_SERIES_INTRADAY&symbol=" + String(symbol) + "&datatype=json&output_size=compact";
+            var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
             console.log(url);
             const xhr = new XMLHttpRequest();
             xhr.withCredentials = true;
@@ -55,7 +55,7 @@ const app = Vue.createApp({
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
                 console.log(response);
-                var ts = response["Time Series (5min)"];
+                var ts = response["Time Series (Daily)"];
                 var x = [];
                 var y = [];
                 var plot_data = [{
@@ -98,11 +98,26 @@ const app = Vue.createApp({
 
             }.bind(this)
             xhr.send();
+        },
+        demo: function(){
+            var url = "https://s.yimg.com/aq/autoc";
+            var data = {
+                query: "TATAPOWER",
+                lang: 'en-US'
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("get", url);
+            xhr.onload = function(){
+                var response = JSON.parse(xhr.response);
+                console.log("response", response);
+            }.bind(this)
+            xhr.send(JSON.stringify(data));
         }
     },
     mounted(){
         this.plot_container = document.getElementById("plot");
-        this.testApi();
+        // this.testApi();
+        // this.demo();
     },
 })
 
