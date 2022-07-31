@@ -76,48 +76,10 @@ const app = Vue.createApp({
             xhr.send();
             this.search_value = name;
             this.search_results = [];
-            // var data = [
-            //     {
-            //       x: ['2013-10-04 22:23:00', '2013-11-04 22:23:00', '2013-12-04 22:23:00'],
-            //       y: [1, 3, 6],
-            //       type: 'scatter'
-            //     }
-            //   ];
-              
-            //   Plotly.newPlot(this.plot_container, data);
         },
-        testApi: function(){
-            var url = "/intraday";
-            const xhr = new XMLHttpRequest();
-            xhr.open("get", url);
-            xhr.onload = function(){
-                var response = JSON.parse(xhr.response);
-                console.log(response);
-                var plot_data = [response]
-                Plotly.react(this.plot_container, plot_data)
-
-            }.bind(this)
-            xhr.send();
-        },
-        demo: function(){
-            var url = "https://s.yimg.com/aq/autoc";
-            var data = {
-                query: "TATAPOWER",
-                lang: 'en-US'
-            }
-            const xhr = new XMLHttpRequest();
-            xhr.open("get", url);
-            xhr.onload = function(){
-                var response = JSON.parse(xhr.response);
-                console.log("response", response);
-            }.bind(this)
-            xhr.send(JSON.stringify(data));
-        }
     },
     mounted(){
         this.plot_container = document.getElementById("plot");
-        // this.testApi();
-        // this.demo();
     },
 })
 
