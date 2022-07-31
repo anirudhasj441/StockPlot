@@ -10,7 +10,7 @@
         <div class="inputs">
             <div class="flex items-center q-gutter-x-md">
                 <div style="width: 300px;" style="position: relative;">
-                    <input v-model="search_value" placeholder="Search" class="form-control">
+                    <input v-model="search_value" @keydown.enter.prevent="filter(search_value)" placeholder="Search" class="form-control">
                     <q-card v-if="search_results.length > 0" style="position: absolute; width: 300px; max-height: 300px; overflow-y: auto; z-index: 99999;">
                         <q-card-section>
                             <q-list>
