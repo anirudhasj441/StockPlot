@@ -6,19 +6,63 @@ const app = Vue.createApp({
             tmp: "Temp",
             search: true,
             loading: false,
+            show_results: false,
+            filter_loading: false,
+            plot_added: false,
             search_value: "",
+            latest_price: "",
+            currency: "",
             search_results: [],
-            data: {}
+            data: [],
+            layout: {
+                title: "",
+                xaxis: {
+                    title: {
+                        text: "Date"
+                    },
+                    autorange: true,
+                    rangeselector: {buttons: [
+                        {
+                        count: 1,
+                        label: '1m',
+                        step: 'month',
+                        stepmode: 'backward'
+                        },
+                        {
+                        count: 3,
+                        label: '3m',
+                        step: 'month',
+                        stepmode: 'backward'
+                        },
+                        {step: 'all'},
+                    ]},
+                    rangeslider: {},
+                },
+                yaxis: {
+                    title: {
+                        text: ""
+                    }
+                },
+                margin: {
+                    l: 50,
+                    r: 50,
+                    b: 50,
+                    t: 100
+                }
+            },
+            config: {}
         }
     },
     methods: {
-        plotly: function(div, data){
-            Plotly.newPlot(div, data);
+        plotly: function(div, data, layout, config){
+            this.plot_added = true;
+            Plotly.react(div, data, layout, config);
         },
         filter: function(value){
             if(value.length < 3){
                 return;
             }
+            this.filter_loading = true;
             var url = "https://alpha-vantage.p.rapidapi.com/query?keywords=" + String(value) +"&function=SYMBOL_SEARCH&datatype=json";
             const xhr = new XMLHttpRequest();
             xhr.withCredentials = true;
@@ -31,20 +75,22 @@ const app = Vue.createApp({
                     console.log(item);
                     data = {
                         name: item["2. name"],
-                        symbol: item["1. symbol"]
+                        symbol: item["1. symbol"],
+                        currency: item["8. currency"]
                     }
                     this.search_results.push(data);
                 }
+                this.filter_loading = false;
+                this.show_results = true;
                 console.log(response.bestMatches);
                 console.log(this.search_results);
-                clearTimeout(timeout);
             }.bind(this)
             xhr.setRequestHeader("X-RapidAPI-Key", "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710")
             xhr.setRequestHeader("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com");
             xhr.send();
         },
-        buttonClicked: function(symbol, name){
-            console.log(symbol);
+        buttonClicked: function(symbol, name, currency){
+            this.show_results = false;
             var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
             console.log(url);
             const xhr = new XMLHttpRequest();
@@ -65,13 +111,21 @@ const app = Vue.createApp({
                 }];
                 for(var data in ts){
                     x.push(data);
-                    y.push(ts[data]["1. open"])
+                    y.push(ts[data]["4. close"])
                 }
                 plot_data[0]["x"] = x;
                 plot_data[0]["y"] = y;
                 plot_data[0]["type"] = 'scatter';
-                Plotly.react(this.plot_container, plot_data);
-                console.log(plot_data);
+                // Plotly.react(this.plot_container, plot_data);
+                // let min = x[0];
+                // let max = x.slice(-1)[0];
+                this.layout.title = name;
+                this.layout.yaxis.title.text = "Price " + currency;
+                this.latest_price = y[0];
+                this.currency = currency;
+                // this.layout.range[0] = min;
+                // this.layout.range[1] = min;
+                this.plotly(this.plot_container, plot_data, this.layout, this.config);
             }.bind(this)
             xhr.send();
             this.search_value = name;
@@ -83,5 +137,5 @@ const app = Vue.createApp({
     },
 })
 
-app.use(Quasar);
+// app.use(Quasar);
 app.mount("#app");
