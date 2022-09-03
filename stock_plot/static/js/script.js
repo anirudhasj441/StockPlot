@@ -12,6 +12,7 @@ const app = Vue.createApp({
             search_value: "",
             latest_price: "",
             currency: "",
+            latest_time: "",
             search_results: [],
             data: [],
             layout: {
@@ -89,6 +90,12 @@ const app = Vue.createApp({
             xhr.setRequestHeader("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com");
             xhr.send();
         },
+        updateSearch: function(value){
+            if(value == ""){
+                this.show_results = false;
+                this.search_results = [];
+            }
+        },
         buttonClicked: function(symbol, name, currency){
             this.show_results = false;
             var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
@@ -116,15 +123,11 @@ const app = Vue.createApp({
                 plot_data[0]["x"] = x;
                 plot_data[0]["y"] = y;
                 plot_data[0]["type"] = 'scatter';
-                // Plotly.react(this.plot_container, plot_data);
-                // let min = x[0];
-                // let max = x.slice(-1)[0];
                 this.layout.title = name;
                 this.layout.yaxis.title.text = "Price " + currency;
-                this.latest_price = y[0];
+                this.latest_price = parseFloat(y[0]).toFixed(2);
+                this.latest_time = x[0];
                 this.currency = currency;
-                // this.layout.range[0] = min;
-                // this.layout.range[1] = min;
                 this.plotly(this.plot_container, plot_data, this.layout, this.config);
             }.bind(this)
             xhr.send();
