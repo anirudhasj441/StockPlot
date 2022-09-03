@@ -63,6 +63,8 @@ const app = Vue.createApp({
             if(value.length < 3){
                 return;
             }
+            this.search_results = [];
+            this.show_results = false;
             this.filter_loading = true;
             var url = "https://alpha-vantage.p.rapidapi.com/query?keywords=" + String(value) +"&function=SYMBOL_SEARCH&datatype=json";
             const xhr = new XMLHttpRequest();
@@ -70,8 +72,6 @@ const app = Vue.createApp({
             xhr.open("get", url);
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
-                console.log(response);
-                this.search_results = [];
                 for(var item of response.bestMatches){
                     console.log(item);
                     data = {
