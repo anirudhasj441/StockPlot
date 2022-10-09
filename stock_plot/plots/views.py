@@ -1,8 +1,10 @@
 import json
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse
-from datetime import datetime
 import yfinance as yf
+import plotly.graph_objects as go
+import plotly.io
 import requests
 
 
@@ -14,34 +16,57 @@ def home(request):
     }
     return render(request, 'plots/index.html', params)
 
+@csrf_exempt
 def intraDay(request):
-    sym = "TATAPOWER.BSE"
-    tc = yf.Ticker(sym)
-    df = yf.download(sym, period="1d", interval="5m")
-    df = df.reset_index()
-    # for i in df:
-    #     print(i["High"])
-    
-    # print(df.to_json(orient="records"))
-    data = df.loc[:, ["Datetime", "High"]].to_json(orient="records")
-    data = json.loads(data)
-    x = []
-    y = []
-    trace = {}
-    for item in data:
-        x.append(datetime.fromtimestamp(item["Datetime"] / 1e3))
-        y.append(item["High"])
-    trace["x"] = x
-    trace["y"] = y
-    trace["type"] = "scatter"
-    print(tc.info["currency"])
+    data = json.loads(request.body)
+    sym = data["sym"]
+    period = data["period"]
+    interval = "5m"
+    if period not in ["1d", "5d", "1mo"]:
+        interval = "1d"
+    data = yf.download(sym, period=period, interval=interval)
+    x = data.index
+    y = data["Close"]
+    trace = go.Scatter(
+        x=x,
+        y=y,
+        connectgaps=True
+    )
+    layout = go.Layout(
+        title="Tata Consultancy Services",
+        xaxis={
+            "type": "date"
+        }
+    )
+    fig = go.Figure([trace], layout)
+    fig_data = json.loads(plotly.io.to_json(fig))
+    print(y.iloc[-1])
+    fig_data["latest_price"] = y.iloc[-1]
+    fig_data["latest_time"] = x[-1]
+    return JsonResponse(fig_data, safe=False)
 
-    return JsonResponse(trace, safe=False)
 
-def getTicker (company_name):
-    url = "https://s.yimg.com/aq/autoc"
-    parameters = {'query': company_name, 'lang': 'en-US'}
-    response = requests.get(url = url, params = parameters)
-    # data = response.json()
-    # company_code = data['ResultSet']['Result'][0]['symbol']
-    return response
+# APIs
+@csrf_exempt
+def searchSymbols(request):
+    data = json.loads(request.body)
+    url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete"
+    params = {
+        "q": data["q"]
+    }
+    headers = {
+        "X-RapidAPI-Key": "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710",
+        "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com"
+    }
+    response = requests.request("GET", url, headers=headers, params=params).json()
+    results = response["quotes"]
+    ret = []
+    for item in results:
+        if item["exchDisp"] == "NSE" and "longname" in item.keys():
+            data = {
+                "name": item["longname"],
+                "symbol": item["symbol"],
+                "currency": "INR"
+            }
+            ret.append(data)
+    return JsonResponse(ret, safe=False)
