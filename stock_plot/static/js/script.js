@@ -142,7 +142,3 @@ const app = Vue.createApp({
 
 // app.use(Quasar);
 app.mount("#app");
-
-//New Line
-
-//another New Line
