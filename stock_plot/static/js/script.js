@@ -4,6 +4,7 @@ const app = Vue.createApp({
     data(){
         return {
             tmp: "Temp",
+            period: "1d",
             search: true,
             loading: false,
             show_results: false,
@@ -19,25 +20,9 @@ const app = Vue.createApp({
                 title: "",
                 xaxis: {
                     title: {
-                        text: "Date"
+                        text: "Time"
                     },
-                    autorange: true,
-                    rangeselector: {buttons: [
-                        {
-                        count: 1,
-                        label: '1m',
-                        step: 'month',
-                        stepmode: 'backward'
-                        },
-                        {
-                        count: 3,
-                        label: '3m',
-                        step: 'month',
-                        stepmode: 'backward'
-                        },
-                        {step: 'all'},
-                    ]},
-                    rangeslider: {},
+                    rangebreaks: []
                 },
                 yaxis: {
                     title: {
@@ -66,29 +51,20 @@ const app = Vue.createApp({
             this.search_results = [];
             this.show_results = false;
             this.filter_loading = true;
-            var url = "https://alpha-vantage.p.rapidapi.com/query?keywords=" + String(value) +"&function=SYMBOL_SEARCH&datatype=json";
+            var url = "/search";
+            var data = {
+                "q": value
+            }
             const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.open("get", url);
+            xhr.open("post", url);
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
-                for(var item of response.bestMatches){
-                    console.log(item);
-                    data = {
-                        name: item["2. name"],
-                        symbol: item["1. symbol"],
-                        currency: item["8. currency"]
-                    }
-                    this.search_results.push(data);
-                }
+                console.log(response)
+                this.search_results = response;
                 this.filter_loading = false;
                 this.show_results = true;
-                console.log(response.bestMatches);
-                console.log(this.search_results);
             }.bind(this)
-            xhr.setRequestHeader("X-RapidAPI-Key", "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710")
-            xhr.setRequestHeader("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com");
-            xhr.send();
+            xhr.send(JSON.stringify(data));
         },
         updateSearch: function(value){
             if(value == ""){
@@ -96,44 +72,56 @@ const app = Vue.createApp({
                 this.search_results = [];
             }
         },
-        buttonClicked: function(symbol, name, currency){
+        setPeriod: function(value){
+            this.period = value;
+            this.showPlot(this.symbol, this.name, this.currency);
+        },
+        showPlot: function(symbol, name, currency){
             this.show_results = false;
-            var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
-            console.log(url);
+            this.symbol = symbol;
+            this.name = name;
+            this.currency = currency;
+            // var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
+            var url = "/intraday";
+            var data = {
+                "sym": symbol,
+                "period": this.period
+            }
             const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.open("get", url);
-            xhr.setRequestHeader("X-RapidAPI-Key", "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710");
-            xhr.setRequestHeader("X-RapidAPI-Host", "alpha-vantage.p.rapidapi.com");
+            xhr.open("post", url);
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
                 console.log(response);
-                var ts = response["Time Series (Daily)"];
-                var x = [];
-                var y = [];
-                var plot_data = [{
-                    x: [],
-                    y: [],
-                    type: "scatter"
-                }];
-                for(var data in ts){
-                    x.push(data);
-                    y.push(ts[data]["4. close"])
-                }
-                plot_data[0]["x"] = x;
-                plot_data[0]["y"] = y;
-                plot_data[0]["type"] = 'scatter';
                 this.layout.title = name;
                 this.layout.yaxis.title.text = "Price " + currency;
-                this.latest_price = parseFloat(y[0]).toFixed(2);
-                this.latest_time = x[0];
+                // this.layout.xaxis.rangebreaks[0].values = response.dt_breaks;
+                if(["5d", "1mo"].includes(this.period)){
+                    this.layout.xaxis.rangebreaks = [
+                        {
+                            bounds: [16,9.25],
+                            pattern: "hour"
+                        },
+                        {
+                            bounds: ['sat','mon']
+                        }
+                    ]
+                }
+                else{
+                    console.log(this.period);
+                    this.layout.xaxis.rangebreaks = [];
+                }
+                this.latest_price = parseFloat(response["latest_price"]).toFixed(2);
+                this.latest_time = response["latest_time"];
                 this.currency = currency;
-                this.plotly(this.plot_container, plot_data, this.layout, this.config);
+                this.data = response.data;
+                console.log(this.layout.xaxis);
+                // this.layout = response.layout;
+                this.plotly(this.plot_container, this.data, this.layout, this.config);
             }.bind(this)
-            xhr.send();
+            xhr.send(JSON.stringify(data));
             this.search_value = name;
             this.search_results = [];
-        },
+        }
     },
     mounted(){
         this.plot_container = document.getElementById("plot");
