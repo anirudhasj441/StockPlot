@@ -36,7 +36,9 @@ const app = Vue.createApp({
                     t: 100
                 }
             },
-            config: {}
+            config: {
+                responsive: true
+            }
         }
     },
     methods: {
