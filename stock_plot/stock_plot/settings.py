@@ -74,15 +74,12 @@ WSGI_APPLICATION = 'stock_plot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'stock_db',
-        'USER': 'devil',
-        'PASSWORD': 'Devil@2606',              # <-- UPDATED line
-        'HOST': 'localhost',                # <-- UPDATED line
-        'PORT': '3306',
+        'OPTIONS': {
+            'read_default_file': str(Path.joinpath(BASE_DIR, 'my.cnf'))
+        }
     }
 }
 
