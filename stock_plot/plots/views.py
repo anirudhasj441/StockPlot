@@ -14,7 +14,7 @@ def timeseries(request):
     params = {
         "tmp": "temp"
     }
-    return render(request, 'plots/index.html', params)
+    return render(request, 'plots/timeseries.html', params)
 
 @csrf_exempt
 def intraDay(request):
