@@ -53,7 +53,7 @@ const app = Vue.createApp({
             this.search_results = [];
             this.show_results = false;
             this.filter_loading = true;
-            var url = "/search";
+            var url = "/plots/search";
             var data = {
                 "q": value
             }
@@ -84,7 +84,7 @@ const app = Vue.createApp({
             this.name = name;
             this.currency = currency;
             // var url = "https://alpha-vantage.p.rapidapi.com/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + symbol + "&outputsize=compact&interval=5min&datatype=json";
-            var url = "/intraday";
+            var url = "/plots/intraday";
             var data = {
                 "sym": symbol,
                 "period": this.period

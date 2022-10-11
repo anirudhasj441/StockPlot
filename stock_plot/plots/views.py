@@ -10,7 +10,7 @@ import requests
 
 # Create your views here.
 
-def home(request):
+def timeseries(request):
     params = {
         "tmp": "temp"
     }
