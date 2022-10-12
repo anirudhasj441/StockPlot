@@ -2,12 +2,36 @@
 {% load static %}
 {% block css %}
     <style>
-        
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 200,
+            'GRAD' 0,
+            'opsz' 48
+        }
+        .btn-graph-type:hover {
+            border: solid 0.1rem #0d6efd;
+        }
+        #sub-preloader {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 999;
+            width: 100%;
+            height: 100vh;
+            background-color: white;
+            background-image: url("{% static 'assets/preloader.gif' %}");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: 150px 150px;
+            opacity: 0.8;
+        }
     </style>
 {% endblock css %}
 {% block title %}StockPlot - Timeseries{% endblock title %}
 {% block body %}
     <div class="container pt-3">
+        <div id="sub-preloader" v-if="graph_loading"></div>
         <div class="inputs">
             <div class="d-flex gx-5">
                 <div style="position: relative; width: 350px"> 
@@ -28,19 +52,26 @@
             </div>
         </div> 
         <div class="mt-3">
-            <div class="row align-items-center" style="flex-wrap: wrap-reverse;" v-if="plot_added">
-                <div class="col-lg-6 col-sm-12 col-md-6">
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''" @click="setPeriod('1d')">1D</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''" @click="setPeriod('5d')">5D</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''" @click="setPeriod('1mo')">1M</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''" @click="setPeriod('6mo')">6M</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''" @click="setPeriod('ytd')">YTD</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''" @click="setPeriod('1y')">1Y</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''" @click="setPeriod('5y')">5Y</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''" @click="setPeriod('max')">MAX</button>
+            <div v-if="plot_added">
+                <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
+                    <div class="col-lg-6 col-sm-12 col-md-6">
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''" @click="setPeriod('1d')">1D</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''" @click="setPeriod('5d')">5D</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''" @click="setPeriod('1mo')">1M</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''" @click="setPeriod('6mo')">6M</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''" @click="setPeriod('ytd')">YTD</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''" @click="setPeriod('1y')">1Y</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''" @click="setPeriod('5y')">5Y</button>
+                        <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''" @click="setPeriod('max')">MAX</button>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
+                        <p class="fs-1">[[latest_price]]</p> <p class="fs-4 text-muted ms-2">[[currency]]</p>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
-                    <p class="fs-1">[[latest_price]]</p> <p class="fs-4 text-muted ms-2">[[currency]]</p>
+                <div class="d-flex justify-content-end">
+                    <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
+                        <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' : 'show_chart']]</span>
+                    </button>
                 </div>
             </div>
             <div id="plot"></div>
