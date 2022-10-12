@@ -11,17 +11,24 @@ const app = Vue.createApp({
             show_results: false,
             filter_loading: false,
             plot_added: false,
+            auto_reload: false,
+            graph_loading: false,
             search_value: "",
             latest_price: "",
             currency: "",
             latest_time: "",
+            chart_type: "line_chart",
             search_results: [],
             data: [],
             layout: {
                 title: "",
+                dragmode: "pan",
                 xaxis: {
                     title: {
                         text: "Time"
+                    },
+                    'rangeslider' : {
+                        'visible' : false
                     },
                     rangebreaks: []
                 },
@@ -79,7 +86,14 @@ const app = Vue.createApp({
             this.period = value;
             this.showPlot(this.symbol, this.name, this.currency);
         },
-        showPlot: function(symbol, name, currency){
+        updateChartType: function(){
+            this.chart_type = (this.chart_type == "line_chart") ? "candlestick_chart" : "line_chart";
+            this.showPlot(this.symbol, this.name, this.currency);
+        },
+        showPlot: function(symbol, name, currency, auto_reload=false){
+            if(!auto_reload){
+                this.graph_loading = true;
+            }
             this.show_results = false;
             this.symbol = symbol;
             this.name = name;
@@ -88,7 +102,8 @@ const app = Vue.createApp({
             var url = "/plots/intraday";
             var data = {
                 "sym": symbol,
-                "period": this.period
+                "period": this.period,
+                "chart_type": this.chart_type
             }
             const xhr = new XMLHttpRequest();
             xhr.open("post", url);
@@ -120,6 +135,8 @@ const app = Vue.createApp({
                 console.log(this.layout.xaxis);
                 // this.layout = response.layout;
                 this.plotly(this.plot_container, this.data, this.layout, this.config);
+                // this.auto_reload = true;
+                this.graph_loading = false;
             }.bind(this)
             xhr.send(JSON.stringify(data));
             this.search_value = name;
@@ -129,6 +146,11 @@ const app = Vue.createApp({
     mounted(){
         this.preloader = false;
         this.plot_container = document.getElementById("plot");
+        const interval = setInterval(function(){
+            if(this.auto_reload){
+                this.showPlot(this.symbol, this.name, this.currency, true);
+            }
+        }.bind(this), 5000);
     },
 })
 

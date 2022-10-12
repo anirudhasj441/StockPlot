@@ -16,6 +16,7 @@ def timeseries(request):
     }
     return render(request, 'plots/timeseries.html', params)
 
+# APIs
 @csrf_exempt
 def intraDay(request):
     data = json.loads(request.body)
@@ -24,14 +25,24 @@ def intraDay(request):
     interval = "5m"
     if period not in ["1d", "5d", "1mo"]:
         interval = "1d"
-    data = yf.download(sym, period=period, interval=interval)
-    x = data.index
-    y = data["Close"]
-    trace = go.Scatter(
-        x=x,
-        y=y,
-        connectgaps=True
-    )
+    stock_data = yf.download(sym, period=period, interval=interval)
+    x = stock_data.index
+    y = stock_data["Close"]
+    if data["chart_type"] == "line_chart":
+        trace = go.Scatter(
+            x=x,
+            y=y,
+            connectgaps=True
+        )
+    else:
+        trace = go.Candlestick(
+            x=x,
+            open=stock_data["Open"],
+            high=stock_data["High"],
+            low=stock_data["Low"],
+            close=stock_data["Close"]
+        )
+
     layout = go.Layout(
         title="Tata Consultancy Services",
         xaxis={
@@ -45,8 +56,6 @@ def intraDay(request):
     fig_data["latest_time"] = x[-1]
     return JsonResponse(fig_data, safe=False)
 
-
-# APIs
 @csrf_exempt
 def searchSymbols(request):
     data = json.loads(request.body)
