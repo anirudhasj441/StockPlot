@@ -5,6 +5,7 @@ const app = Vue.createApp({
         return {
             tmp: "Temp",
             period: "1d",
+            preloader: true,
             search: true,
             loading: false,
             show_results: false,
@@ -126,6 +127,7 @@ const app = Vue.createApp({
         }
     },
     mounted(){
+        this.preloader = false;
         this.plot_container = document.getElementById("plot");
     },
 })

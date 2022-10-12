@@ -44,9 +44,8 @@
 </head>
 
 <body>
-    <div id="preloader">
-    </div>
     <div id="app">
+        <div id="preloader" v-if="preloader"></div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">StockPlot</a>
@@ -85,11 +84,6 @@
 
         {% endblock body %}
     </div>
-    <script>
-        window.onload = function(){
-            document.getElementById("preloader").style.display = "none";
-        }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
