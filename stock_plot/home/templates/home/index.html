@@ -1,12 +1,89 @@
 {% extends 'base.html' %}{% load static %}
 {% block css %}
-    <style>
-        
-    </style>
+<style>
+    /* Small devices (landscape phones, 576px and up) */
+    @media (min-width: 576px) {
+
+        .serch-field,
+        .banner-text {
+            width: 100%;
+        }
+    }
+
+    /* Medium devices (tablets, 768px and up) */
+    @media (min-width: 768px) {
+
+        .serch-field,
+        .banner-text {
+            width: 50%;
+        }
+    }
+
+    /* Large devices (desktops, 992px and up) */
+    @media (min-width: 992px) {
+
+        .serch-field,
+        .banner-text {
+            width: 50%;
+        }
+    }
+</style>
 {% endblock css %}
 {% block title %}StockPlot{% endblock title %}
 {% block body %}
-    <div class="container pt-3">
-        <a href="/plots/timeseries" class="btn btn-primary">Timeseries</a>
-    </div>
+<div class="container pt-5">
+    <section id="banner">
+        <div class="text-center banner-text mx-auto">
+            <h1 style="font-size: 2.5rem;">
+                Stock market analysis for the serious part–time investor
+            </h1>
+            <p class="text-muted my-5">We use intuitive data visualizations and automated stock analysis to help you
+                understand a stock's fundamentals within minutes.</p>
+        </div>
+        <div class="mx-auto serch-field d-flex">
+            <div style="position: relative; width: -webkit-fill-available">
+                <input v-model="search_value" type="text" class="form-control py-3" placeholder="Search..."
+                    @keydown.enter.prevent="filter(search_value)" @update:model-value="updateSearch">
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0"
+                    v-if="show_results && search_results.length < 1">
+                    <div class="text-primary">No Results found</div>
+                </div>
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0" v-if="filter_loading">
+                    <i class="text-primary fa fa-2x fa-spinner fa-spin"></i>
+                </div>
+                <ul class="bg-light rounded py-2 px-2 dropdown-menu-light p-0"
+                    style="list-style: none; position: absolute; z-index: 9999; width: 100%;"
+                    v-if="show_results && search_results.length > 0">
+                    <li v-for="result of search_results" class="text-wrap"><button type="button" class="dropdown-item"
+                            @click="showPlot(result.symbol, result.name, result.currency)">[[result.name]]</button></li>
+                </ul>
+            </div>
+            <div>
+                <button class="ms-4 btn btn-primary py-3 px-sm-4 px-md-5 px-lg-5" @click="filter(search_value)"><i
+                        class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div class="mt-5 row g-3 align-items-start">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card bg-primary text-white p-3 mx-sm-auto" style="max-width: 450px;">
+                    <div class="card-body">
+                        <h3 class="card-title">Know what you own, and know why you own it!!</h5>
+                        <h5 class="card-subtitle text-end">- By Peter Lynch</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <h2>
+                    You're just 30 seconds away from unlocking the
+                    <span class="text-primary">best stock analysis tool for part–time investors</span>
+                </h2>
+                <div>
+                    <button class="btn btn-primary px-3">SUBSCRIBE NOW</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- <a href="/plots/timeseries" class="btn btn-primary">Timeseries</a> -->
+    <section id=""></section>
+</div>
 {% endblock body %}
