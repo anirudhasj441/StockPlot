@@ -32,7 +32,6 @@ def intraDay(request):
         trace = go.Scatter(
             x=x,
             y=y,
-            fill="tozeroy",
             line={
                 "color": "#6368C9"
             },
