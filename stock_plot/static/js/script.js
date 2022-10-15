@@ -18,6 +18,7 @@ const app = Vue.createApp({
             currency: "",
             latest_time: "",
             chart_type: "line_chart",
+            current_year: "",
             search_results: [],
             data: [],
             layout: {
@@ -146,6 +147,7 @@ const app = Vue.createApp({
     mounted(){
         this.preloader = false;
         this.plot_container = document.getElementById("plot");
+        this.current_year = new Date().getFullYear();
         const interval = setInterval(function(){
             if(this.auto_reload){
                 this.showPlot(this.symbol, this.name, this.currency, true);
