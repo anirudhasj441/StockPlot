@@ -91,8 +91,19 @@ const app = Vue.createApp({
             this.chart_type = (this.chart_type == "line_chart") ? "candlestick_chart" : "line_chart";
             this.showPlot(this.symbol, this.name, this.currency);
         },
+        showStock: function(symbol, name, currency){
+            window.location.href = "/stock?symbol=" + symbol + "&name=" + name + "&currency=" + currency;
+        },
+        loadPlot: function(){
+            if(this.stock_page){
+                var symbol = document.getElementById("symbol").value;
+                var name = document.getElementById("name").value;
+                var currency = document.getElementById("currency").value;
+                this.showPlot(symbol, name, currency);
+            }
+        },
         showPlot: function(symbol, name, currency, auto_reload=false){
-            if(!auto_reload){
+            if(!auto_reload && this.plot_added){
                 this.graph_loading = true;
             }
             this.show_results = false;
@@ -137,7 +148,7 @@ const app = Vue.createApp({
                 // this.layout = response.layout;
                 this.plotly(this.plot_container, this.data, this.layout, this.config);
                 // this.auto_reload = true;
-                this.graph_loading = false;
+                this.graph_loading = false; 
             }.bind(this)
             xhr.send(JSON.stringify(data));
             this.search_value = name;
@@ -148,6 +159,8 @@ const app = Vue.createApp({
         this.preloader = false;
         this.plot_container = document.getElementById("plot");
         this.current_year = new Date().getFullYear();
+        this.stock_page = document.getElementById("stock-page").value;
+        this.loadPlot();
         const interval = setInterval(function(){
             if(this.auto_reload){
                 this.showPlot(this.symbol, this.name, this.currency, true);
