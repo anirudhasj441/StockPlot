@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+    
+{% endblock css %}
+{% block title %}{{name}} - StockPlot{% endblock title %}
+{% block body %}
+    <div class="container py-5">
+        <div id="preloader" v-if="loading"></div>
+        <div id="sub-preloader" v-if="graph_loading"></div>
+        <div class="mx-auto serch-field d-flex">
+            <div style="position: relative; width: -webkit-fill-available">
+                <input v-model="search_value" type="text" class="form-control py-3" placeholder="Search..."
+                    @keydown.enter.prevent="filter(search_value)" @update:model-value="updateSearch">
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result"
+                    v-if="show_results && search_results.length < 1">
+                    <div class="text-primary">No Results found</div>
+                </div>
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result" v-if="filter_loading">
+                    <i class="text-primary fa fa-2x fa-spinner fa-spin"></i>
+                </div>
+                <ul class="bg-light rounded py-2 px-2 dropdown-menu-light p-0 serch-result"
+                    style="list-style: none"
+                    v-if="show_results && search_results.length > 0">
+                    <li v-for="result of search_results" class="text-wrap"><button type="button" class="dropdown-item" @click="showStock(result.symbol, result.name, result.currency)">[[result.name]]</button></li>
+                </ul>
+            </div>
+            <div>
+                <button class="ms-4 btn btn-primary py-3 px-sm-4 px-md-5 px-lg-5" @click="filter(search_value)"><i
+                        class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div v-if="plot_added">
+            <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
+                <div class="col-lg-6 col-sm-12 col-md-6">
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''" @click="setPeriod('1d')">1D</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''" @click="setPeriod('5d')">5D</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''" @click="setPeriod('1mo')">1M</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''" @click="setPeriod('6mo')">6M</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''" @click="setPeriod('ytd')">YTD</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''" @click="setPeriod('1y')">1Y</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''" @click="setPeriod('5y')">5Y</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''" @click="setPeriod('max')">MAX</button>
+                </div>
+                <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
+                    <p class="fs-1">[[latest_price]]</p> <p class="fs-4 text-muted ms-2">[[currency]]</p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
+                    <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' : 'show_chart']]</span>
+                </button>
+            </div>
+        </div>
+        <div id="plot"></div>
+        <input type="hidden" id="stock-page" value="true">
+        <input type="hidden" id="symbol" value="{{symbol}}">
+        <input type="hidden" id="name" value="{{name}}">
+        <input type="hidden" id="currency" value="{{currency}}">
+    </div>
+{% endblock body %}
+{% block script %}
+    
+{% endblock script %}

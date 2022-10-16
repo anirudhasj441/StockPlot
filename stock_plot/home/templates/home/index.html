@@ -44,18 +44,17 @@
             <div style="position: relative; width: -webkit-fill-available">
                 <input v-model="search_value" type="text" class="form-control py-3" placeholder="Search..."
                     @keydown.enter.prevent="filter(search_value)" @update:model-value="updateSearch">
-                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0"
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result"
                     v-if="show_results && search_results.length < 1">
                     <div class="text-primary">No Results found</div>
                 </div>
-                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0" v-if="filter_loading">
+                <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result" v-if="filter_loading">
                     <i class="text-primary fa fa-2x fa-spinner fa-spin"></i>
                 </div>
-                <ul class="bg-light rounded py-2 px-2 dropdown-menu-light p-0"
-                    style="list-style: none; position: absolute; z-index: 9999; width: 100%;"
+                <ul class="bg-light rounded py-2 px-2 dropdown-menu-light p-0 serch-result"
+                    style="list-style: none"
                     v-if="show_results && search_results.length > 0">
-                    <li v-for="result of search_results" class="text-wrap"><button type="button" class="dropdown-item"
-                            @click="showPlot(result.symbol, result.name, result.currency)">[[result.name]]</button></li>
+                    <li v-for="result of search_results" class="text-wrap"><button type="button" class="dropdown-item" @click="showStock(result.symbol, result.name, result.currency)">[[result.name]]</button></li>
                 </ul>
             </div>
             <div>
