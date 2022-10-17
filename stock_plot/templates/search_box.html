@@ -1,0 +1,27 @@
+<div class="mx-auto search-field d-flex">
+    <div style="position: relative; width: -webkit-fill-available">
+        <input v-model="search_value" type="text" class="form-control py-3" placeholder="Search..."
+            @keydown.enter.prevent="filter(search_value)" @update:model-value="updateSearch">
+            <button class="btn btn-sm text-muted clear-search-btn py-3" v-if="search_value.length > 0" @click="search_value = ''; updateSearch(search_value)">
+                <span class="material-symbols-outlined">
+                    close
+                </span>
+            </button>
+        <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result"
+            v-if="show_results && search_results.length < 1">
+            <div class="text-primary">No Results found</div>
+        </div>
+        <div class="alert alert-dark bg-light text-center rounded py-2 px-2 p-0 serch-result" v-if="filter_loading">
+            <i class="text-primary fa fa-2x fa-spinner fa-spin"></i>
+        </div>
+        <ul class="bg-light rounded py-2 px-2 dropdown-menu-light p-0 search-result"
+            style="list-style: none"
+            v-if="show_results && search_results.length > 0">
+            <li v-for="result of search_results" class="text-wrap"><button type="button" class="dropdown-item" @click="showStock(result.symbol, result.name, result.currency)">[[result.name]]</button></li>
+        </ul>
+    </div>
+    <div>
+        <button class="ms-4 btn btn-primary py-3 px-sm-4 px-md-5 px-lg-5" @click="filter(search_value)"><i
+                class="fa fa-search"></i></button>
+    </div>
+</div>
