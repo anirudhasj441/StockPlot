@@ -2,6 +2,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse
+import numpy as np
 import yfinance as yf
 import plotly.graph_objects as go
 import plotly.io
@@ -26,6 +27,7 @@ def intraDay(request):
     if period not in ["1d", "5d", "1mo"]:
         interval = "1d"
     stock_data = yf.download(sym, period=period, interval=interval)
+    stock_data.fillna('', inplace=True)
     x = stock_data.index
     y = stock_data["Close"]
     if data["chart_type"] == "line_chart":
@@ -54,7 +56,6 @@ def intraDay(request):
     )
     fig = go.Figure([trace], layout)
     fig_data = json.loads(plotly.io.to_json(fig))
-    print(y.iloc[-1])
     fig_data["latest_price"] = y.iloc[-1]
     fig_data["latest_time"] = x[-1]
     return JsonResponse(fig_data, safe=False)
