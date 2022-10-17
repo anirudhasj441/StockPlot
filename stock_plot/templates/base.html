@@ -75,16 +75,23 @@
         .container{
             min-height: 100vh;
         }
-        .serch-result{
+        .search-result{
             position: absolute;
             width: 100%;
             z-index: 9999;
         }
-
+        .clear-search-btn{
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .clear-search-btn:hover{
+            color: #6368C9 !important;
+        }
          /* Small devices (landscape phones, 576px and up) */
     @media (min-width: 576px) {
 
-        .serch-field,
+        .search-field,
         .banner-text {
             width: 100%;
         }
@@ -96,7 +103,7 @@
     /* Medium devices (tablets, 768px and up) */
     @media (min-width: 768px) {
 
-        .serch-field,
+        .search-field,
         .banner-text {
             width: 100%;
         }
@@ -108,7 +115,7 @@
     /* Large devices (desktops, 992px and up) */
     @media (min-width: 992px) {
 
-        .serch-field,
+        .search-field,
         .banner-text {
             width: 50%;
         }
