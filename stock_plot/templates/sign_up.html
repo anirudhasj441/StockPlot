@@ -1,0 +1,38 @@
+<div class="modal fade" id="signup-form" tabindex="-1" aria-labelledby="signupFormLabel" aria-hidden="true" >
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-5">
+                <div class="mb-3">
+                    <h3 class="modal-title text-primary">Sign Up</h3>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control py-3 shadow-none input-field" name="fname" id="fname" placeholder="First Name">
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control py-3 shadow-none input-field" name="lname" id="lname" placeholder="Last Name">
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control py-3 shadow-none input-field" name="email" id="email" placeholder="Email">
+                </div>
+                <div class="mb-3" style="position: relative;">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" name="password" id="password" placeholder="Password">
+                    <button class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
+                        <span class="material-symbols-outlined">
+                            [[show_password ? 'visibility_off': 'visibility']]
+                        </span>
+                    </button>
+                </div>
+                <div class="mb-3">
+                    By continuning, you agree to StockPlot's Privacy Policy and Terms of Service.
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-primary w-100 rounded-pill py-3">Create Your Account</button>
+                </div>
+                <div class="text-muted text-center">
+                    Already have an account?
+                   <a href="#" style="text-decoration: none"> Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

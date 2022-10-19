@@ -2,14 +2,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body p-5">
-                <div class="mb-2">
+                <div class="mb-3">
                     <h3 class="modal-title text-primary">Sign In</h3>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none sign-in-input" id="username" name="username" placeholder="Username">
+                    <input type="email" class="form-control py-3 shadow-none input-field" id="username" name="username" placeholder="Email">
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none sign-in-input" id="password" name="password" placeholder="Password">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" id="password" name="password" placeholder="Password">
                     <button class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
                             [[show_password ? 'visibility_off': 'visibility']]
