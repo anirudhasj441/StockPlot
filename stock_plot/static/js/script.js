@@ -13,6 +13,7 @@ const app = Vue.createApp({
             plot_added: false,
             auto_reload: false,
             graph_loading: false,
+            show_password: false,
             search_value: "",
             latest_price: "",
             currency: "",
