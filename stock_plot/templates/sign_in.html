@@ -9,10 +9,10 @@
                     <input type="text" class="form-control py-3 shadow-none sign-in-input" id="username" name="username" placeholder="Username">
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input type="password" class="form-control py-3 shadow-none sign-in-input" id="password" name="password" placeholder="Password">
-                    <button class="btn text-muted py-3" style="position: absolute; top: 0; right: 0">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none sign-in-input" id="password" name="password" placeholder="Password">
+                    <button class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
-                            visibility
+                            [[show_password ? 'visibility_off': 'visibility']]
                         </span>
                     </button>
                 </div>
