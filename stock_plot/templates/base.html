@@ -88,41 +88,48 @@
         .clear-search-btn:hover{
             color: #6368C9 !important;
         }
-         /* Small devices (landscape phones, 576px and up) */
-    @media (min-width: 576px) {
 
-        .search-field,
-        .banner-text {
-            width: 100%;
-        }
-        .footer-logo{
+        .sign-in-input{
             border: none !important;
+            outline: none !important;
+            border-bottom: #6368C9 solid 2px !important;
         }
-    }
+        
+         /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) {
 
-    /* Medium devices (tablets, 768px and up) */
-    @media (min-width: 768px) {
+            .search-field,
+            .banner-text {
+                width: 100%;
+            }
+            .footer-logo{
+                border: none !important;
+            }
+        }
 
-        .search-field,
-        .banner-text {
-            width: 100%;
-        }
-        .footer-logo{
-            border-right: 1px solid white !important;
-        }
-    }
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) {
 
-    /* Large devices (desktops, 992px and up) */
-    @media (min-width: 992px) {
+            .search-field,
+            .banner-text {
+                width: 100%;
+            }
+            .footer-logo{
+                border-right: 1px solid white !important;
+            }
+        }
 
-        .search-field,
-        .banner-text {
-            width: 50%;
+        /* Large devices (desktops, 992px and up) */
+        @media (min-width: 992px) {
+
+            .search-field,
+            .banner-text {
+                width: 50%;
+            }
+            .footer-logo{
+                border-right: 1px solid white !important;
+            }
         }
-        .footer-logo{
-            border-right: 1px solid white !important;
-        }
-    }
     </style>
     {% block css %}
     {% endblock css %}
@@ -159,7 +166,7 @@
                     </ul>
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item me-lg-2">
-                            <a class="nav-link" aria-current="page" href="#">Sign In</a>
+                            <a class="nav-link" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#sign-form">Sign In</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-sm btn-primary text-light" href="#">Sign Up</a>
@@ -190,6 +197,7 @@
                 </div>
             </div>
         </section>
+        {% include 'sign_in.html' %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
