@@ -14,10 +14,17 @@ const app = Vue.createApp({
             auto_reload: false,
             graph_loading: false,
             show_password: false,
+            show_message: false,
             search_value: "",
             latest_price: "",
             currency: "",
             latest_time: "",
+            fname: "",
+            lname: "",
+            email: "",
+            password: "",
+            message_tag: "",
+            message: "",
             chart_type: "line_chart",
             current_year: "",
             search_results: [],
@@ -102,6 +109,55 @@ const app = Vue.createApp({
                 var currency = document.getElementById("currency").value;
                 this.showPlot(symbol, name, currency);
             }
+        },
+        signUp: function(){
+            let url = "/signup";
+            let data = {
+                fname: this.fname,
+                lname: this.lname,
+                email: this.email,
+                password: this.password
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = function(){
+                var response = JSON.parse(xhr.response);
+                if(response.status == "success"){
+                    this.message_tag = "success";
+                }
+                else{
+                    this.message_tag = "danger";
+                }
+                this.message = response.message;
+                this.show_message = true;
+                console.log(response)
+            }.bind(this)
+            xhr.send(JSON.stringify(data));
+        },
+        signIn: function(){
+            let url = "/signin";
+            let data = {
+                email: this.email,
+                password: this.password
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = function(){
+                let response = JSON.parse(xhr.response);
+                console.log(response);
+                if(response.status == "success"){
+                    var modal_el = document.getElementById("sign-form");
+                    var modal = bootstrap.Modal.getInstance(modal_el);
+                    modal.hide();
+                    window.location.href = "/";
+                }
+                else{
+                    this.message_tag = "danger";
+                    this.message = response.message;
+                    this.show_message = true;
+                }
+            }.bind(this)
+            xhr.send(JSON.stringify(data));
         },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){
