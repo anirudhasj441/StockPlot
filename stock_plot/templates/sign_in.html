@@ -6,11 +6,11 @@
                     <h3 class="modal-title text-primary">Sign In</h3>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none input-field" id="username" name="username" placeholder="Username">
+                    <input type="text" class="form-control py-3 shadow-none input-field" v-model="email" placeholder="Email">
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" id="password" name="password" placeholder="Password">
-                    <button class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" v-model="password" placeholder="Password">
+                    <button type="button" class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
                             [[show_password ? 'visibility_off': 'visibility']]
                         </span>
@@ -20,7 +20,7 @@
                     <a href="#" class="text-muted">Forgot Password</a>
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary w-100 rounded-pill py-3">Sign In</button>
+                    <button class="btn btn-primary w-100 rounded-pill py-3" @click="signIn">Sign In</button>
                 </div>
                 <div class="text-muted text-center">
                     Don't have an account? 
