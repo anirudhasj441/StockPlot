@@ -2,6 +2,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body p-5">
+                {% include 'messages.html' %}
                 <div class="mb-3">
                     <h3 class="modal-title text-primary">Sign In</h3>
                 </div>
@@ -24,7 +25,7 @@
                 </div>
                 <div class="text-muted text-center">
                     Don't have an account? 
-                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#signup-form" data-bs-dismiss="modal"> Sign Up</a>
+                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#signup-form" data-bs-dismiss="modal" @click="show_message=false"> Sign Up</a>
                 </div>
             </div>
         </div>

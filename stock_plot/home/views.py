@@ -18,7 +18,6 @@ def index(request):
 @csrf_exempt
 def userSignUp(request):
     response = {}
-    print(request.method)
     if not request.user.is_authenticated:
         if request.method == "POST":
             try:
@@ -27,7 +26,6 @@ def userSignUp(request):
                 fname = data["fname"]
                 lname = data["lname"]
                 password = data["password"]
-                print(email)
                 user = User.objects.create_user(
                     username=email,
                     email=email,
@@ -35,6 +33,7 @@ def userSignUp(request):
                     first_name=fname,
                     last_name=lname
                 )
+                user.save()
             except Exception as err:
                 response["status"] = "failed"
                 response["message"] = "Error: " + str(err)
