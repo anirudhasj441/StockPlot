@@ -7,7 +7,7 @@
                     <h3 class="modal-title text-primary">Sign Up</h3>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none input-field" :class="fname_error ? 'border-danger' : ''" v-model="fname" placeholder="First Name">
+                    <input autocomplete="off" type="text" class="form-control py-3 shadow-none input-field" :class="fname_error ? 'border-danger' : ''" v-model="fname" placeholder="First Name">
                     <span v-if="fname_error" class="text-danger fs-6">[[fname_error_message]]</span>
                 </div>
                 <div class="mb-3">
@@ -15,11 +15,11 @@
                     <span v-if="lname_error" class="text-danger fs-6">[[lname_error_message]]</span>
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="email" placeholder="Email">
+                    <input autocomplete="off" type="email" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="email" placeholder="Email">
                     <span v-if="email_error" class="text-danger fs-6">[[email_error_message]]</span>
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="password" placeholder="Password">
+                    <input autocomplete="off" :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="password" placeholder="Password">
                     <button type="button" class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
                             [[show_password ? 'visibility_off': 'visibility']]

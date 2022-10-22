@@ -213,6 +213,8 @@ const app = Vue.createApp({
         showForm: function(){
             this.show_message = false;
             this.resetValidation();
+            this.email = "";
+            this.password = "";
         },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){
