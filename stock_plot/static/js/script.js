@@ -64,7 +64,8 @@ const app = Vue.createApp({
                 }
             },
             config: {
-                responsive: false
+                responsive: false,
+                displaylogo: false
             }
         }
     },
@@ -88,7 +89,6 @@ const app = Vue.createApp({
             xhr.open("post", url);
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
-                console.log(response)
                 this.search_results = response;
                 this.filter_loading = false;
                 this.show_results = true;
@@ -143,10 +143,8 @@ const app = Vue.createApp({
                 else{
                     this.message_tag = "danger";
                 }
-                console.log(this.message_tag)
                 this.message = response.message;
                 this.show_message = true;
-                console.log(response)
             }.bind(this)
             xhr.send(JSON.stringify(data));
         },
@@ -165,12 +163,11 @@ const app = Vue.createApp({
             xhr.onload = function(){
                 this.signin_loading = false;
                 let response = JSON.parse(xhr.response);
-                console.log(response);
                 if(response.status == "success"){
                     var modal_el = document.getElementById("sign-form");
                     var modal = bootstrap.Modal.getInstance(modal_el);
                     modal.hide();
-                    window.location.href = "/";
+                    window.location.reload();
                 }
                 else{
                     this.message_tag = "danger";
@@ -211,7 +208,6 @@ const app = Vue.createApp({
                 this.password_error_message = "Password should not be empty"
                 is_pass = false;
             }
-            console.log(is_pass)
             return is_pass;
         },
         showForm: function(){
@@ -237,7 +233,6 @@ const app = Vue.createApp({
             xhr.open("post", url);
             xhr.onload = function(){
                 var response = JSON.parse(xhr.response);
-                console.log(response);
                 this.layout.title = name;
                 this.layout.yaxis.title.text = "Price " + currency;
                 // this.layout.xaxis.rangebreaks[0].values = response.dt_breaks;
@@ -253,14 +248,12 @@ const app = Vue.createApp({
                     ]
                 }
                 else{
-                    console.log(this.period);
                     this.layout.xaxis.rangebreaks = [];
                 }
                 this.latest_price = parseFloat(response["latest_price"]).toFixed(2);
                 this.latest_time = response["latest_time"];
                 this.currency = currency;
                 this.data = response.data;
-                console.log(this.layout.xaxis);
                 // this.layout = response.layout;
                 this.plotly(this.plot_container, this.data, this.layout, this.config);
                 // this.auto_reload = true;
