@@ -31,7 +31,10 @@
                     By continuning, you agree to StockPlot's Privacy Policy and Terms of Service.
                 </div>
                 <div class="mb-3">
-                    <button type="button" class="btn btn-primary w-100 rounded-pill py-3" @click="signUp">Create Your Account</button>
+                    <button type="button" class="btn btn-primary w-100 rounded-pill py-3" :disabled="signup_loading" @click="signUp">
+                        <i v-if="signup_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+                        <span v-else>Create Your Account</span>
+                    </button>
                 </div>
                 <div class="text-muted text-center">
                     Already have an account?

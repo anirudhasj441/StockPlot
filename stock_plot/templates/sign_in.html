@@ -23,7 +23,10 @@
                     <a href="#" class="text-muted">Forgot Password</a>
                 </div>
                 <div class="mb-3">
-                    <button class="btn btn-primary w-100 rounded-pill py-3" @click="signIn">Sign In</button>
+                    <button class="btn btn-primary w-100 rounded-pill py-3" :disabled="signin_loading" @click="signIn">
+                        <i v-if="signin_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+                        <span v-else>Sign In</span>
+                    </button>
                 </div>
                 <div class="text-muted text-center">
                     Don't have an account? 
