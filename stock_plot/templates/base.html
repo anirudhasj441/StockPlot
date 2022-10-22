@@ -102,6 +102,9 @@
             right: 0 !important;
             left: auto !important;
         }
+        .border-danger{
+            border-color: red !important;
+        }
         
          /* Small devices (landscape phones, 576px and up) */
         @media (min-width: 576px) {
@@ -186,10 +189,10 @@
                         </li> -->
                         {% else %}
                         <li class="nav-item me-lg-2">
-                            <a class="nav-link" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#sign-form" @click="show_message=false">Sign In</a>
+                            <a class="nav-link" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#sign-form" @click="showForm">Sign In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-sm btn-primary text-light" href="#" data-bs-toggle="modal" data-bs-target="#signup-form" @click="show_message=false">Sign Up</a>
+                            <a class="nav-link btn btn-sm btn-primary text-light" href="#" data-bs-toggle="modal" data-bs-target="#signup-form" @click="showForm">Sign Up</a>
                         </li>
                         {% endif %}
                     </ul>

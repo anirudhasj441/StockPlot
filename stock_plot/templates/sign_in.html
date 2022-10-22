@@ -7,15 +7,17 @@
                     <h3 class="modal-title text-primary">Sign In</h3>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none input-field" v-model="email" placeholder="Email">
+                    <input type="email" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="email" placeholder="Email">
+                    <span v-if="email_error" class="text-danger fs-6">[[email_error_message]]</span>
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" v-model="password" placeholder="Password">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" :class="password_error ? 'border-danger' : ''" v-model="password" placeholder="Password">
                     <button type="button" class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
                             [[show_password ? 'visibility_off': 'visibility']]
                         </span>
                     </button>
+                    <span v-if="password_error" class="text-danger fs-6">[[password_error_message]]</span>
                 </div>
                 <div class="mb-3 text-end">
                     <a href="#" class="text-muted">Forgot Password</a>
@@ -25,7 +27,7 @@
                 </div>
                 <div class="text-muted text-center">
                     Don't have an account? 
-                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#signup-form" data-bs-dismiss="modal" @click="show_message=false"> Sign Up</a>
+                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#signup-form" data-bs-dismiss="modal" @click="showForm"> Sign Up</a>
                 </div>
             </div>
         </div>

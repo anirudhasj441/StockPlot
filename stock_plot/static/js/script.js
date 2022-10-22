@@ -15,6 +15,10 @@ const app = Vue.createApp({
             graph_loading: false,
             show_password: false,
             show_message: false,
+            email_error: false,
+            password_error: false,
+            fname_error: false,
+            lname_error: false,
             search_value: "",
             latest_price: "",
             currency: "",
@@ -27,6 +31,10 @@ const app = Vue.createApp({
             message: "",
             chart_type: "line_chart",
             current_year: "",
+            email_error_message: "",
+            password_error_message: "",
+            fname_error_message: "",
+            lname_error_message: "",
             search_results: [],
             data: [],
             layout: {
@@ -111,6 +119,9 @@ const app = Vue.createApp({
             }
         },
         signUp: function(){
+            if(!this.validate()){
+                return;
+            }
             let url = "/signup";
             let data = {
                 fname: this.fname,
@@ -135,6 +146,9 @@ const app = Vue.createApp({
             xhr.send(JSON.stringify(data));
         },
         signIn: function(){
+            if(!this.validate()){
+                return;
+            }
             let url = "/signin";
             let data = {
                 email: this.email,
@@ -158,6 +172,41 @@ const app = Vue.createApp({
                 }
             }.bind(this)
             xhr.send(JSON.stringify(data));
+        },
+        resetValidation: function(){
+            this.email_error = false;
+            this.password_error = false;
+            this.email_error_message = "";
+            this.password_error_message = "";
+        },
+        validate: function(){
+            var is_pass = true;
+            this.resetValidation();
+            if(this.email.replaceAll(" ", "") == ""){
+                this.email_error = true;
+                this.email_error_message = "email should not be empty"
+                is_pass = false;
+            }
+            if(this.password.replaceAll(" ", "") == ""){
+                this.password_error = true;
+                this.password_error_message = "Password should not be empty"
+                is_pass = false;
+            }
+            if(this.fname.replaceAll(" ", "") == ""){
+                this.fname_error = true;
+                this.fname_error_message = "First name should not be empty"
+                is_pass = false;
+            }
+            if(this.lname.replaceAll(" ", "") == ""){
+                this.lname_error = true;
+                this.lname_error_message = "Last name should not be empty"
+                is_pass = false;
+            }
+            return is_pass;
+        },
+        showForm: function(){
+            this.show_message = false;
+            this.resetValidation();
         },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){

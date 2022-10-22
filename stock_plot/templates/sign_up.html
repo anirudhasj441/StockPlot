@@ -7,21 +7,25 @@
                     <h3 class="modal-title text-primary">Sign Up</h3>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none input-field" v-model="fname" placeholder="First Name">
+                    <input type="text" class="form-control py-3 shadow-none input-field" :class="fname_error ? 'border-danger' : ''" v-model="fname" placeholder="First Name">
+                    <span v-if="fname_error" class="text-danger fs-6">[[fname_error_message]]</span>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control py-3 shadow-none input-field" v-model="lname" placeholder="Last Name">
+                    <input type="text" class="form-control py-3 shadow-none input-field" :class="lname_error ? 'border-danger' : ''" v-model="lname" placeholder="Last Name">
+                    <span v-if="lname_error" class="text-danger fs-6">[[lname_error_message]]</span>
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control py-3 shadow-none input-field" v-model="email" placeholder="Email">
+                    <input type="email" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="email" placeholder="Email">
+                    <span v-if="email_error" class="text-danger fs-6">[[email_error_message]]</span>
                 </div>
                 <div class="mb-3" style="position: relative;">
-                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" v-model="password" placeholder="Password">
+                    <input :type="show_password ? 'text' : 'password'" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="password" placeholder="Password">
                     <button type="button" class="btn text-muted py-3" style="position: absolute; top: 0; right: 0" @click="show_password = !show_password">
                         <span class="material-symbols-outlined">
                             [[show_password ? 'visibility_off': 'visibility']]
                         </span>
                     </button>
+                    <span v-if="password_error" class="text-danger fs-6">[[password_error_message]]</span>
                 </div>
                 <div class="mb-3">
                     By continuning, you agree to StockPlot's Privacy Policy and Terms of Service.
@@ -31,7 +35,7 @@
                 </div>
                 <div class="text-muted text-center">
                     Already have an account?
-                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#sign-form" data-bs-dismiss="modal" @click="show_message=false"> Sign In</a>
+                   <a href="#" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#sign-form" data-bs-dismiss="modal" @click="showForm"> Sign In</a>
                 </div>
             </div>
         </div>
