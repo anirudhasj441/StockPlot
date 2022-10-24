@@ -1,10 +1,13 @@
 <div class="modal fade" id="sign-form" tabindex="-1" aria-labelledby="signinFormLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+            <!-- <div class="modal-header text-end">
+            </div> -->
             <div class="modal-body p-5">
                 {% include 'messages.html' %}
-                <div class="mb-3">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
                     <h3 class="modal-title text-primary">Sign In</h3>
+                    <button class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="mb-3">
                     <input type="email" autocomplete="username" class="form-control py-3 shadow-none input-field" :class="email_error ? 'border-danger' : ''" v-model="email" placeholder="Email">
