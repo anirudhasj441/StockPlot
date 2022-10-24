@@ -20,44 +20,51 @@ def timeseries(request):
 # APIs
 @csrf_exempt
 def intraDay(request):
-    data = json.loads(request.body)
-    sym = data["sym"]
-    period = data["period"]
-    interval = "5m"
-    if period not in ["1d", "5d", "1mo"]:
-        interval = "1d"
-    stock_data = yf.download(sym, period=period, interval=interval)
-    stock_data.fillna('', inplace=True)
-    x = stock_data.index
-    y = stock_data["Close"]
-    if data["chart_type"] == "line_chart":
-        trace = go.Scatter(
-            x=x,
-            y=y,
-            line={
-                "color": "#6368C9"
-            },
-            connectgaps=True
-        )
-    else:
-        trace = go.Candlestick(
-            x=x,
-            open=stock_data["Open"],
-            high=stock_data["High"],
-            low=stock_data["Low"],
-            close=stock_data["Close"]
-        )
+    try:
+        data = json.loads(request.body)
+        sym = data["sym"]
+        period = data["period"]
+        interval = "5m"
+        if period not in ["1d", "5d", "1mo"]:
+            interval = "1d"
+        stock_data = yf.download(sym, period=period, interval=interval)
+        stock_data.fillna('', inplace=True)
+        x = stock_data.index
+        y = stock_data["Close"]
+        print(stock_data)
+        if data["chart_type"] == "line_chart":
+            trace = go.Scatter(
+                x=x,
+                y=y,
+                line={
+                    "color": "#6368C9"
+                },
+                connectgaps=True
+            )
+        else:
+            trace = go.Candlestick(
+                x=x,
+                open=stock_data["Open"],
+                high=stock_data["High"],
+                low=stock_data["Low"],
+                close=stock_data["Close"]
+            )
 
-    layout = go.Layout(
-        title="Tata Consultancy Services",
-        xaxis={
-            "type": "date"
-        }
-    )
-    fig = go.Figure([trace], layout)
-    fig_data = json.loads(plotly.io.to_json(fig))
-    fig_data["latest_price"] = y.iloc[-1]
-    fig_data["latest_time"] = x[-1]
+        layout = go.Layout(
+            title="Tata Consultancy Services",
+            xaxis={
+                "type": "date"
+            }
+        )
+        fig = go.Figure([trace], layout)
+        fig_data = json.loads(plotly.io.to_json(fig))
+        fig_data["latest_price"] = y.iloc[-1]
+        fig_data["latest_time"] = x[-1]
+    except IndexError:
+        fig_data["status"] = "failed"
+        fig_data["message"] = "Data not fetched!"
+    else:
+        fig_data["status"] = "success"
     return JsonResponse(fig_data, safe=False)
 
 @csrf_exempt
