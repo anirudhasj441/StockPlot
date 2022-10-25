@@ -53,6 +53,9 @@
             background-size: 150px 150px;
             opacity: 0.8;
         }
+        .sub-section{
+            background-color: #FAFBFF;
+        }
         .btn{
             box-shadow: none !important;
         }
@@ -73,8 +76,8 @@
         .nav-link{
             font-weight: bold;
         }
-        .container{
-            min-height: 100vh;
+        #body{
+            min-height: 100vh !important;
         }
         .search-result{
             position: absolute;
@@ -199,9 +202,11 @@
                 </div>
             </div>
         </nav>
-        {% block body %}
-
-        {% endblock body %}
+        <section id="body">
+            {% block body %}
+    
+            {% endblock body %}
+        </section>
         <section id="footer" class="bg-dark">
             <div class="container-fluid py-3 text-light">
                 <div class="row">
