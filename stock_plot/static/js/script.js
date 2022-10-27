@@ -118,6 +118,7 @@ const app = Vue.createApp({
                 var name = document.getElementById("name").value;
                 var currency = document.getElementById("currency").value;
                 this.showPlot(symbol, name, currency);
+                this.getNews(symbol);
             }
         },
         signUp: function(){
@@ -215,6 +216,19 @@ const app = Vue.createApp({
             this.resetValidation();
             this.email = "";
             this.password = "";
+        },
+        getNews: function(symbol){
+            let url = "/stock/news";
+            let data = {
+                "symbol": symbol
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = function(){
+                let response = JSON.parse(xhr.response);
+                console.log(response);
+            }.bind(this)
+            xhr.send(JSON.stringify(data));
         },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){
