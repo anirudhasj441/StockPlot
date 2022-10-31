@@ -1,6 +1,8 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
+from django.db.models import Q
+from .models import Stock
 import requests
 import json
 
@@ -20,6 +22,53 @@ def stock(request):
 
 
 #APIs
+
+@csrf_exempt
+def searchStock(request):
+    try:
+        response = []
+        data = json.loads(request.body)
+        q = data["q"]
+        db_results = Stock.objects.filter(
+            Q(symbol__icontains = q) | 
+            Q(full_name__icontains = q)
+        )
+        if db_results:
+            for result in db_results:
+                data = {
+                    "name": result.full_name,
+                    "symbol": result.symbol,
+                    "currency": result.currency
+                }
+                response.append(data)
+        else:
+            url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/auto-complete"
+            params = {
+                "q": data["q"]
+            }
+            headers = {
+                "X-RapidAPI-Key": "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710",
+                "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com"
+            }
+            api_response = requests.request("GET", url, headers=headers, params=params).json()
+            api_results = api_response["quotes"]
+            for result in api_results:
+                if result["exchDisp"] == "NSE" and "longname" in result.keys():
+                    stock = Stock.objects.create(
+                        symbol = result["symbol"],
+                        full_name = result["longname"],
+                        currency = "INR"
+                    )
+                    data = {
+                        "name": result["longname"],
+                        "symbol": result["symbol"],
+                        "currency": "INR"
+                    }
+                    response.append(data)
+    except Exception as err:
+        print("Error: ", err)
+    finally:
+        return JsonResponse(response, safe=False)
 
 @csrf_exempt
 def getNews(request):

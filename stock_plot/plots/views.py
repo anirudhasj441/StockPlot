@@ -31,7 +31,6 @@ def intraDay(request):
         stock_data.fillna('', inplace=True)
         x = stock_data.index
         y = stock_data["Close"]
-        print(stock_data)
         if data["chart_type"] == "line_chart":
             trace = go.Scatter(
                 x=x,

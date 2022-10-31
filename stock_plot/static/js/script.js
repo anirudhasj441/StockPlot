@@ -81,7 +81,7 @@ const app = Vue.createApp({
             this.search_results = [];
             this.show_results = false;
             this.filter_loading = true;
-            var url = "/plots/search";
+            var url = "/stock/search";
             var data = {
                 "q": value
             }
