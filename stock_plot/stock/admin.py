@@ -2,5 +2,15 @@ from django.contrib import admin
 from .models import Stock, StockTrack
 # Register your models here.
 
-admin.site.register(Stock)
+class StockAdmin(admin.ModelAdmin):
+    list_display = [
+        "symbol",
+        "full_name"
+    ]
+    search_fields = [
+        "symbol",
+        "full_name"
+    ]
+
+admin.site.register(Stock, StockAdmin)
 admin.site.register(StockTrack)
