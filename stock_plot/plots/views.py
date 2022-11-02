@@ -28,7 +28,7 @@ def intraDay(request):
         if period not in ["1d", "5d", "1mo"]:
             interval = "1d"
         stock_data = yf.download(sym, period=period, interval=interval)
-        stock_data.fillna('', inplace=True)
+        stock_data.dropna()
         x = stock_data.index
         y = stock_data["Close"]
         if data["chart_type"] == "line_chart":
