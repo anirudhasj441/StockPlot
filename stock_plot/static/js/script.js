@@ -118,7 +118,7 @@ const app = Vue.createApp({
                 var name = document.getElementById("name").value;
                 var currency = document.getElementById("currency").value;
                 this.showPlot(symbol, name, currency);
-                this.getNews(symbol);
+                // this.getNews(symbol);
             }
         },
         signUp: function(){
