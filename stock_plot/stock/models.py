@@ -13,6 +13,16 @@ class Stock(models.Model):
     def __str__(self):
         return str(self.symbol)
 
+class StockNews(models.Model):
+    news_id = models.CharField(max_length=500, unique=True)
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    title = models.CharField(max_length=500, null=True, blank=True)
+    publish_date = models.DateTimeField(default=timezone.now)
+    thumbnail = models.CharField(max_length=500, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
+    def __str__(self):
+        return str(self.news_id)
+
 class StockTrack(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
