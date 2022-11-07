@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Stock, StockTrack
+from .models import Stock, StockTrack, StockNews
 # Register your models here.
 
 class StockAdmin(admin.ModelAdmin):
@@ -14,3 +14,4 @@ class StockAdmin(admin.ModelAdmin):
 
 admin.site.register(Stock, StockAdmin)
 admin.site.register(StockTrack)
+admin.site.register(StockNews)

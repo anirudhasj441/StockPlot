@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.db.models import Q
-from .models import Stock
+from .models import Stock, StockNews
 import requests
 import json
 
@@ -75,17 +75,28 @@ def getNews(request):
     try:
         response = {}
         data = json.loads(request.body)
-        url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/news/v2/list"
-        params = {
-            "region": "IN",
-            "snippetCount": 4,
-            "s": data["symbol"]
-        }
-        headers = {
-            "X-RapidAPI-Key": "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710",
-            "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com"
-        }
-        results = requests.request("POST", url, headers=headers, params=params).json()
+        # url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/news/v2/list"
+        # params = {
+        #     "region": "IN",
+        #     "snippetCount": 4,
+        #     "s": data["symbol"]
+        # }
+        # headers = {
+        #     "X-RapidAPI-Key": "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710",
+        #     "X-RapidAPI-Host": "apidojo-yahoo-finance-v1.p.rapidapi.com"
+        # }
+        # results = requests.request("POST", url, headers=headers, params=params).json()
+        stock = Stock.objects.get(symbol=data["symbol"])
+        news = StockNews.objects.filter(stock=stock)
+        results = []
+        for row in news:
+            news_item = {
+                "id": row.news_id,
+                "title": row.title,
+                "publish_date": row.publish_date,
+                "thumbnail": row.thumbnail
+            }
+            results.append(news_item)
         response["results"] = results
     except Exception as e:
         response["status"] = "failed"
