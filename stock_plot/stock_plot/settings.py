@@ -136,3 +136,53 @@ MEDIA_ROOT = Path.joinpath(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOG_DIR = Path.joinpath(BASE_DIR, "log")
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = Path.joinpath(LOG_DIR, "info.log")
+LOG_FILE.touch(exist_ok=True)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_FILE,
+            'maxBytes': 1024*1024*300,
+            'backupCount': 10,
+            'formatter': 'verbose',
+        }
+    },
+    'loggers': {
+        "django": {
+            "handlers": ["console"],
+            'propagate': True
+        },
+        "debug": {
+            "handlers": ["info"],
+            'propagate': True
+        }
+    }
+}
