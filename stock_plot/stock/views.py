@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import Stock, StockNews
 import requests
+import logging
 import json
 
 # Create your views here.
@@ -12,6 +13,9 @@ def stock(request):
     symbol = request.GET["symbol"]
     name = request.GET["name"]
     currency = request.GET["currency"]
+    logger = logging.getLogger("debug")
+    print(logger)
+    logger.warning("Jump to Stock page")
     params = {
         "symbol": symbol,
         "name": name,
