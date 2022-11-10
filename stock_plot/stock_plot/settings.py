@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'home.apps.HomeConfig',
     'plots.apps.PlotsConfig',
     'stock.apps.StockConfig'
@@ -186,3 +187,7 @@ LOGGING = {
         }
     }
 }
+
+CRONJOBS = [
+    ('0 */6 * * *', 'stock.views.saveNewsInDb')
+]
