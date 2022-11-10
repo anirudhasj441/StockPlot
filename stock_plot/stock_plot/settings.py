@@ -189,5 +189,5 @@ LOGGING = {
 }
 
 CRONJOBS = [
-    ('0 */6 * * *', 'stock.views.saveNewsInDb')
+    ('0 */12 * * *', 'stock.views.saveNewsInDb')
 ]
