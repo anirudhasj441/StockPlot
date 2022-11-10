@@ -17,9 +17,10 @@ class StockNews(models.Model):
     news_id = models.CharField(max_length=500, unique=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     title = models.CharField(max_length=500, null=True, blank=True)
-    publish_date = models.DateTimeField(default=timezone.now)
+    publish_date = models.DateTimeField()
     thumbnail = models.CharField(max_length=500, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    add_date = models.DateField(default=timezone.now)
     def __str__(self):
         return str(self.news_id)
 
@@ -30,3 +31,10 @@ class StockTrack(models.Model):
     lower_limit = models.FloatField(null=True, blank=True)
     def __str__(self):
         return str(self.pk)
+
+class VisitedStock(models.Model):
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    visited_by = models.ManyToManyField(User, blank=True)
+    unique_visited = models.IntegerField(null=True, blank=True, default=0)
+    def __str__(self):
+        return str(self.stock.symbol)
