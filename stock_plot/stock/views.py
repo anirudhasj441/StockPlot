@@ -170,20 +170,33 @@ def getNews(request):
                 title = news_content["title"]
                 pub_date = news_content["pubDate"]
                 thumbnail = news_content["thumbnail"]["resolutions"][0]["url"]
-
-                StockNews.objects.create(
-                    news_id = id,
-                    stock = stock,
-                    title = title,
-                    publish_date = pub_date,
-                    thumbnail = thumbnail
-                ).save()
-                result = {
-                    "id": id,
-                    "title": title,
-                    "publish_date": pub_date,
-                    "thumbnail": thumbnail
-                }
+                
+                previous_news = StockNews.objects.filter(news_id = id)
+                if previous_news:
+                    logger.warning(f"Existing news found for {stock.symbol} changing add date: {str(timezone.now())}")
+                    previous_news_obj = previous_news[0]
+                    previous_news_obj.add_date = timezone.now()
+                    previous_news_obj.save()
+                    result = {
+                        "id": previous_news_obj.news_id,
+                        "title": previous_news_obj.title,
+                        "publish_date": previous_news_obj.publish_date,
+                        "thumbnail": previous_news_obj.thumbnail
+                    }
+                else:
+                    StockNews.objects.create(
+                        news_id = id,
+                        stock = stock,
+                        title = title,
+                        publish_date = pub_date,
+                        thumbnail = thumbnail
+                    )
+                    result = {
+                        "id": id,
+                        "title": title,
+                        "publish_date": pub_date,
+                        "thumbnail": thumbnail
+                    }
                 results.append(result)
         response["results"] = results
     except Exception as e:
