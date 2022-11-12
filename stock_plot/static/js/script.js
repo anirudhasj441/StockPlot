@@ -37,8 +37,10 @@ const app = Vue.createApp({
             password_error_message: "",
             fname_error_message: "",
             lname_error_message: "",
+            news_slides: 0,
             search_results: [],
             data: [],
+            news: [],
             layout: {
                 title: "",
                 dragmode: "pan",
@@ -226,7 +228,9 @@ const app = Vue.createApp({
             xhr.open("post", url);
             xhr.onload = function(){
                 let response = JSON.parse(xhr.response);
-                console.log(response);
+                this.news = response.results;
+                this.news_slides = Math.floor((this.news.length - 1)/4);
+                console.log(this.news);
             }.bind(this)
             xhr.send(JSON.stringify(data));
         },
