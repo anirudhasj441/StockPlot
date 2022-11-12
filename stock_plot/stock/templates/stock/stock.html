@@ -60,7 +60,7 @@
                 <div class="carousel-inner">
                     <div v-for="slide in news_slides+1" :key="slide" class="carousel-item" :class="(slide == 1) ? 'active' : ''">
                         <div class="row">
-                            <div v-for="news_item in news.slice(4*(slide-1), (4*(slide-1))+4)" class="col-3">
+                            <div v-for="news_item in news.slice(4*(slide-1), (4*(slide-1))+4)" class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="card" style="height: 300px">
                                     <div style="height: 150px; display:flex; align-items:center">
                                         <img :src="news_item.thumbnail" class="card-img-top" alt="...">
