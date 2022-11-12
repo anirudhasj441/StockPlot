@@ -1,5 +1,7 @@
-from .models import Stock, StockNews, VisitedStock
 from django.views.decorators.csrf import csrf_exempt
+from .models import Stock, StockNews, VisitedStock
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.utils.text import Truncator
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.db import IntegrityError
@@ -36,11 +38,12 @@ def saveNewsInDb():
         logger.warning("running by crontab at " + str(timezone.now()))
         stocks = VisitedStock.objects.all()
         for visited_stock in stocks:
-            stock = Stock.objects.get(stock = visited_stock)
+            stock = Stock.objects.get(symbol = visited_stock)
             api_results = getNewsFromApi(stock.symbol)
             if not api_results:
                 return False
-            for news_item in api_results:
+            news = api_results["data"]["main"]["stream"]
+            for news_item in news:
                 news_content = news_item["content"]
                 id = news_content["id"]
                 title = news_content["title"]
@@ -54,7 +57,7 @@ def saveNewsInDb():
                     thumbnail = thumbnail
                 )
     except IntegrityError:
-        logger.info("News Alredy Exists do nothing: " + title)
+        logger.warning("News Alredy Exists do nothing: " + title)
     except Exception as e:
         logger.error(str(e))
 
@@ -153,8 +156,8 @@ def getNews(request):
             for row in news:
                 news_item = {
                     "id": row.news_id,
-                    "title": row.title,
-                    "publish_date": row.publish_date,
+                    "title": Truncator(row.title).chars(50),
+                    "publish_date": naturaltime(row.publish_date),
                     "thumbnail": row.thumbnail
                 }
                 results.append(news_item)
@@ -180,7 +183,7 @@ def getNews(request):
                     result = {
                         "id": previous_news_obj.news_id,
                         "title": previous_news_obj.title,
-                        "publish_date": previous_news_obj.publish_date,
+                        "publish_date": naturaltime(previous_news_obj.publish_date),
                         "thumbnail": previous_news_obj.thumbnail
                     }
                 else:
@@ -194,7 +197,7 @@ def getNews(request):
                     result = {
                         "id": id,
                         "title": title,
-                        "publish_date": pub_date,
+                        "publish_date": naturaltime(pub_date),
                         "thumbnail": thumbnail
                     }
                 results.append(result)
