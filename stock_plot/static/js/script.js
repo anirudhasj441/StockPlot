@@ -229,7 +229,7 @@ const app = Vue.createApp({
             xhr.onload = function(){
                 let response = JSON.parse(xhr.response);
                 this.news = response.results;
-                this.news_slides = Math.floor((this.news.length - 1)/4);
+                this.news_slides = Math.floor((this.news.length - 1)/2);
                 console.log(this.news);
             }.bind(this)
             xhr.send(JSON.stringify(data));
