@@ -41,7 +41,7 @@
     <section id="news" class="sub-section">
         <div class="container py-3">
             <h2 class="text-center">{{symbol}} News</h2>
-            <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel">
+            <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-interval="false">
                 <div class="carousel-indicators">
                     <button v-for="slide in news_slides+1" type="button" data-bs-target="#news-slider" :data-bs-slide-to="slide-1" :class="slide == 1 ? 'active' : ''" aria-current="true" :aria-label="'Slide' + slide"></button>
                 </div>
@@ -49,7 +49,7 @@
                     <div v-for="slide in news_slides+1" :key="slide" class="carousel-item" :class="(slide == 1) ? 'active' : ''">
                         <div class="row">
                             <div v-for="news_item in news.slice(2*(slide-1), (2*(slide-1))+2)" class="col-6">
-                                <div class="card" style="height: 300px">
+                                <div class="card">
                                     <div style="height: 150px; display:flex; align-items:center">
                                         <img :src="news_item.thumbnail" class="card-img-top" alt="..." style="max-height: 100%">
                                     </div>
