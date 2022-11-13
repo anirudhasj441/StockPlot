@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Stock, StockNews, VisitedStock
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.text import Truncator
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.db import IntegrityError
 from django.db.models import Q
@@ -75,6 +75,31 @@ def stock(request):
 
     return render(request, "stock/stock.html", params)
 
+def newsContent(request, id):
+    try:
+        news = StockNews.objects.get(news_id=id)
+        news_content = news.content
+        if not news_content:
+            logger.warning("Fetching content from api!")
+            url = "https://yh-finance.p.rapidapi.com/news/v2/get-details"
+            querystring = {
+                "uuid": id,
+                "region": "IN"
+            }
+            headers = {
+                "X-RapidAPI-Key": "7517de7ee2mshc50158a550fd525p1ee8c2jsnabb54b407710",
+                "X-RapidAPI-Host": "yh-finance.p.rapidapi.com"
+            }
+            response = requests.request("GET", url, headers=headers, params=querystring).json()
+            news_content = response["data"]["contents"][0]["content"]["body"]["markup"]
+            news.content = news_content
+            news.save()
+        else:
+            logger.warning("Fetchin content from database!!!")
+    except StockNews.DoesNotExist:
+        return HttpResponse("<h1>Invalid News Id</h1>")
+    else:
+        return HttpResponse(news_content)
 
 #APIs
 
