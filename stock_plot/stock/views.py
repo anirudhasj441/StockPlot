@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from .models import Stock, StockNews, VisitedStock
+from home.models import StockWatchlist
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.text import Truncator
 from django.http import JsonResponse, HttpResponse
@@ -67,10 +68,20 @@ def stock(request):
     symbol = request.GET["symbol"]
     name = request.GET["name"]
     currency = request.GET["currency"]
+    in_watchlist = False
+    if request.user.is_authenticated:
+        watchlists = StockWatchlist.objects.filter(user=request.user)
+        if watchlists:
+            watchlist = watchlists[0]
+            stock = Stock.objects.get(symbol = symbol)
+            stocks = watchlist.stocks.all()
+            in_watchlist = stock in stocks
+
     params = {
         "symbol": symbol,
         "name": name,
-        "currency": currency
+        "currency": currency,
+        "in_watchlist": in_watchlist
     }
 
     return render(request, "stock/stock.html", params)
