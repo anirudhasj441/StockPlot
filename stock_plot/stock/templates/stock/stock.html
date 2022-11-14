@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}
 {% block css %}
     
 {% endblock css %}
@@ -9,7 +8,20 @@
     <div class="container py-5">
         <div id="preloader" v-if="loading"></div>
         <div id="sub-preloader" v-if="graph_loading"></div>
+
         {% include 'search_box.html' %}
+        {% if request.user.is_authenticated %}
+        <button class="btn btn-primary d-flex align-items-center ms-auto" @click="addToWatchlist('{{symbol}}')">
+            <span class="material-symbols-outlined">
+                {% if in_watchlist %}
+                    remove
+                {% else %}
+                    add
+                {% endif %}
+            </span>
+            Watchlist
+        </button>
+        {% endif %}
         <div v-if="plot_added">
             <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
                 <div class="col-lg-6 col-sm-12 col-md-6">

@@ -234,6 +234,22 @@ const app = Vue.createApp({
             }.bind(this)
             xhr.send(JSON.stringify(data));
         },
+        addToWatchlist: function(symbol){
+            let url = "/add_watchlist";
+            let data = {
+                symbol: symbol
+            }
+            console.log(data)
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = function(){
+                let response = JSON.parse(xhr.response);
+                if(response.status == "success"){
+                    window.location.reload();
+                }
+            }.bind(this)
+            xhr.send(JSON.stringify(data));
+        },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){
                 this.graph_loading = true;
