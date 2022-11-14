@@ -177,21 +177,27 @@ def getNews(request):
         )
         results = []
         if news:
-            logger.warning(f"New find for today for {stock.symbol}")
+            logger.warning(f"News find for today for {stock.symbol}")
             for row in news:
-                news_item = {
-                    "id": row.news_id,
-                    "title": Truncator(row.title).chars(50),
-                    "publish_date": naturaltime(row.publish_date),
-                    "thumbnail": row.thumbnail
-                }
-                results.append(news_item)
+                if row.news_id:
+                    news_item = {
+                        "id": row.news_id,
+                        "title": Truncator(row.title).chars(50),
+                        "publish_date": naturaltime(row.publish_date),
+                        "thumbnail": row.thumbnail
+                    }
+                    results.append(news_item)
         else:
             logger.warning(f"News are not present for {stock.symbol}! fetching from API")
             api_results = getNewsFromApi(data["symbol"])
             if not api_results:
                 raise Exception
             news = api_results["data"]["main"]["stream"]
+            if len(news) == 0:
+                logger.warning(f"Not have news for {stock.symbol}")
+                StockNews.objects.create(
+                    stock = stock
+                )
             for news_item in news:
                 news_content = news_item["content"]
                 id = news_content["id"]
