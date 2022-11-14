@@ -14,10 +14,10 @@ class Stock(models.Model):
         return str(self.symbol)
 
 class StockNews(models.Model):
-    news_id = models.CharField(max_length=500, unique=True)
+    news_id = models.CharField(max_length=500, unique=True, null=True, blank=True)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     title = models.CharField(max_length=500, null=True, blank=True)
-    publish_date = models.DateTimeField()
+    publish_date = models.DateTimeField(null=True, blank=True)
     thumbnail = models.CharField(max_length=500, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
     add_date = models.DateField(default=timezone.now)

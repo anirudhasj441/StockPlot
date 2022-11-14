@@ -38,7 +38,7 @@
         <input type="hidden" id="name" value="{{name}}">
         <input type="hidden" id="currency" value="{{currency}}">
     </div>
-    <section id="news" class="sub-section">
+    <section id="news" class="sub-section" v-if="news.length > 0">
         <div class="container py-3">
             <h2 class="text-center">{{symbol}} News</h2>
             <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-touch="true" data-bs-interval="false">
