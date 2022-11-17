@@ -1,13 +1,12 @@
 import json
-from urllib import response
 from django.http import JsonResponse
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import StockWatchlist
 from stock.models import Stock
+import yfinance as yf
 import logging
 
 logger = logging.getLogger("debug")
@@ -15,8 +14,31 @@ logger = logging.getLogger("debug")
 # Create your views here.
 
 def index(request):
+    params = {
+        "watchlists": []
+    }
+    if request.user.is_authenticated:
+        watchlists = StockWatchlist.objects.filter(user=request.user)
+        if watchlists:
+            watchlist = watchlists[0]
+            watchlist_stocks = watchlist.stocks.all()            
+            for stock in watchlist_stocks:
+                symbol = stock.symbol
+                ticker = yf.Ticker(symbol)
+                open_price = ticker.info["open"]
+                price = ticker.info["currentPrice"]
+                print(open_price)
+                diff = round(price - open_price, 2)
+                stock_data = {
+                    "symbol": symbol,
+                    "name": stock.full_name,
+                    "price": price,
+                    "diff": diff,
+                    "currency": stock.currency,
+                }
+                params["watchlists"].append(stock_data)
 
-    return render(request, 'home/index.html')
+    return render(request, 'home/index.html', params)
 
 # APIs 
 
@@ -103,3 +125,43 @@ def addToWatchlist(request):
         response["status"] = "success"
     finally:
         return JsonResponse(response, safe=False)
+
+@csrf_exempt
+def removeFromWatchlist(request):
+    try:
+        response = {}
+        if request.user.is_authenticated:
+            data = json.loads(request.body)
+            symbol = data["symbol"]
+            stock = Stock.objects.get(symbol=symbol)
+            watchlists = StockWatchlist.objects.filter(user=request.user)
+            if watchlists:
+                watchlist = watchlists[0]
+                watchlist.stocks.remove(stock)
+                watchlist.save()
+    except Exception as e:
+        response["status"] = "failed"
+        response["message"] = "Error: " + str(e)
+    else:
+        response["status"] = "success"
+    finally:
+        return JsonResponse(response, safe=False)
+
+@csrf_exempt
+def checkStockInWatchlist(request):
+    response = {}
+    if request.user.is_authenticated:
+        data = json.loads(request.body)
+        symbol = data["symbol"]
+        stock = Stock.objects.get(symbol=symbol)
+        watchlists = StockWatchlist.objects.filter(user=request.user)
+        if watchlists:
+            watchlist = watchlists[0]
+            watchlist_stocks = watchlist.stocks.all()
+            response["watchlisted"] = stock in watchlist_stocks
+            
+        response["status"] = "success"
+    else:
+        response["status"] = "failed"
+    
+    return JsonResponse(response, safe=False)

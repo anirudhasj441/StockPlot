@@ -10,18 +10,24 @@
         <div id="sub-preloader" v-if="graph_loading"></div>
 
         {% include 'search_box.html' %}
-        {% if request.user.is_authenticated %}
-        <button class="btn btn-primary d-flex align-items-center ms-auto" @click="addToWatchlist('{{symbol}}')">
-            <span class="material-symbols-outlined">
-                {% if in_watchlist %}
-                    remove
-                {% else %}
-                    add
-                {% endif %}
+        <button v-if="!added_watchlist" :disabled="watchlist_btn_loading" class="my-3 btn btn-primary d-flex align-items-center justify-content-center ms-auto" style="width: 125px;" @click="addToWatchlist('{{symbol}}')">
+            <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+            <span v-else class="d-flex align-items-center justify-content-between w-100">
+                Watchlist
+                <span class="ms-2 material-symbols-outlined">
+                    add_circle
+                </span>
             </span>
-            Watchlist
         </button>
-        {% endif %}
+        <button v-else :disabled="watchlist_btn_loading" class="my-3 btn btn-primary d-flex align-items-center justify-content-center ms-auto" style="width: 125px;" @click="removeFromWatchlist('{{symbol}}')">
+            <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+            <span v-else class="d-flex align-items-center justify-content-between w-100">
+                Watchlist
+                <span class="material-symbols-outlined">
+                    cancel
+                </span>
+            </span>
+        </button>
         <div v-if="plot_added">
             <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
                 <div class="col-lg-6 col-sm-12 col-md-6">
