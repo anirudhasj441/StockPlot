@@ -68,20 +68,11 @@ def stock(request):
     symbol = request.GET["symbol"]
     name = request.GET["name"]
     currency = request.GET["currency"]
-    in_watchlist = False
-    if request.user.is_authenticated:
-        watchlists = StockWatchlist.objects.filter(user=request.user)
-        if watchlists:
-            watchlist = watchlists[0]
-            stock = Stock.objects.get(symbol = symbol)
-            stocks = watchlist.stocks.all()
-            in_watchlist = stock in stocks
 
     params = {
         "symbol": symbol,
         "name": name,
-        "currency": currency,
-        "in_watchlist": in_watchlist
+        "currency": currency
     }
 
     return render(request, "stock/stock.html", params)

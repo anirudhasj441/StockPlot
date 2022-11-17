@@ -21,6 +21,8 @@ const app = Vue.createApp({
             lname_error: false,
             signin_loading: false,
             signup_loading: false,
+            added_watchlist: false,
+            watchlist_btn_loading: false,
             search_value: "",
             latest_price: "",
             currency: "",
@@ -119,6 +121,7 @@ const app = Vue.createApp({
                 var symbol = document.getElementById("symbol").value;
                 var name = document.getElementById("name").value;
                 var currency = document.getElementById("currency").value;
+                this.checkStockInWatchlist(symbol);
                 this.showPlot(symbol, name, currency);
                 this.getNews(symbol);
             }
@@ -241,13 +244,48 @@ const app = Vue.createApp({
             }
             console.log(data)
             const xhr = new XMLHttpRequest();
+            this.watchlist_btn_loading = true;
             xhr.open("post", url);
             xhr.onload = function(){
+                this.watchlist_btn_loading = false;
                 let response = JSON.parse(xhr.response);
                 if(response.status == "success"){
-                    window.location.reload();
+                    this.added_watchlist = true;
                 }
             }.bind(this)
+            xhr.send(JSON.stringify(data));
+        },
+        removeFromWatchlist: function(symbol){
+            const url = "/remove_watchlist";
+            const data = {
+                symbol: symbol
+            }
+            const xhr = new XMLHttpRequest();
+            this.watchlist_btn_loading = true;
+            xhr.open("post", url);
+            xhr.onload = function(){
+                this.watchlist_btn_loading = false;
+                const response = JSON.parse(xhr.response);
+                if(response.status == "success"){
+                    this.added_watchlist = false;
+                }
+            }.bind(this);
+            xhr.send(JSON.stringify(data));
+        },
+        checkStockInWatchlist: function(symbol){
+            const url = "/check_watchlist";
+            let data = {
+                symbol: symbol
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = function(){
+                var response = JSON.parse(xhr.response);
+                if(response.status == "success"){
+                    this.added_watchlist = response.watchlisted;
+                }
+                console.log(this.added_watchlist);
+            }.bind(this);
             xhr.send(JSON.stringify(data));
         },
         showPlot: function(symbol, name, currency, auto_reload=false){
