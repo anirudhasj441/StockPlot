@@ -14,31 +14,8 @@ logger = logging.getLogger("debug")
 # Create your views here.
 
 def index(request):
-    params = {
-        "watchlists": []
-    }
-    if request.user.is_authenticated:
-        watchlists = StockWatchlist.objects.filter(user=request.user)
-        if watchlists:
-            watchlist = watchlists[0]
-            watchlist_stocks = watchlist.stocks.all()            
-            for stock in watchlist_stocks:
-                symbol = stock.symbol
-                ticker = yf.Ticker(symbol)
-                open_price = ticker.info["open"]
-                price = ticker.info["currentPrice"]
-                print(open_price)
-                diff = round(price - open_price, 2)
-                stock_data = {
-                    "symbol": symbol,
-                    "name": stock.full_name,
-                    "price": price,
-                    "diff": diff,
-                    "currency": stock.currency,
-                }
-                params["watchlists"].append(stock_data)
-
-    return render(request, 'home/index.html', params)
+    
+    return render(request, 'home/index.html')
 
 # APIs 
 
@@ -164,4 +141,28 @@ def checkStockInWatchlist(request):
     else:
         response["status"] = "failed"
     
+    return JsonResponse(response, safe=False)
+
+def getWatchlist(request):
+    response = []
+    if request.user.is_authenticated:
+        watchlists = StockWatchlist.objects.filter(user=request.user)
+        if watchlists:
+            watchlist = watchlists[0]
+            watchlist_stocks = watchlist.stocks.all()
+
+            for stock in watchlist_stocks:
+                ticker = yf.Ticker(stock.symbol)
+                price = ticker.info["currentPrice"]
+                open_price = ticker.info["regularMarketOpen"]
+                diff = round(price - open_price, 2)
+                stock_data = {
+                    "symbol": stock.symbol,
+                    "name": stock.full_name,
+                    "currency": stock.currency,
+                    "price": price,
+                    "diff": diff
+                }
+                response.append(stock_data)
+
     return JsonResponse(response, safe=False)

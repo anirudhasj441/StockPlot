@@ -23,6 +23,7 @@ const app = Vue.createApp({
             signup_loading: false,
             added_watchlist: false,
             watchlist_btn_loading: false,
+            watchlist_loading: false,
             search_value: "",
             latest_price: "",
             currency: "",
@@ -43,6 +44,7 @@ const app = Vue.createApp({
             search_results: [],
             data: [],
             news: [],
+            watchlists: [],
             layout: {
                 title: "",
                 dragmode: "pan",
@@ -288,6 +290,20 @@ const app = Vue.createApp({
             }.bind(this);
             xhr.send(JSON.stringify(data));
         },
+        getWatchlists: function(){
+            this.watchlist_loading = true;
+            console.log("Calling fetch watchlist!!!");
+            let url = "/get_wathlist";
+            const xhr = new XMLHttpRequest();
+            xhr.open("get", url);
+            xhr.onload = function() {
+                var response = JSON.parse(xhr.response);
+                this.watchlists = response;
+                this.watchlist_loading = false;
+                console.log(this.watchlists);
+            }.bind(this)
+            xhr.send();
+        },
         showPlot: function(symbol, name, currency, auto_reload=false){
             if(!auto_reload && this.plot_added){
                 this.graph_loading = true;
@@ -342,13 +358,20 @@ const app = Vue.createApp({
         this.preloader = false;
         this.plot_container = document.getElementById("plot");
         this.current_year = new Date().getFullYear();
-        this.stock_page = document.getElementById("stock-page").value;
+        if(document.getElementById("stock-page")){
+            this.stock_page = document.getElementById("stock-page").value;
+        }
+        else{
+            this.stock_page = false;
+
+        }
+        this.getWatchlists();
         this.loadPlot();
-        const interval = setInterval(function(){
-            if(this.auto_reload){
-                this.showPlot(this.symbol, this.name, this.currency, true);
-            }
-        }.bind(this), 5000);
+        // const interval = setInterval(function(){
+        //     if(this.auto_reload){
+        //         this.showPlot(this.symbol, this.name, this.currency, true);
+        //     }
+        // }.bind(this), 5000);
     },
 })
 
