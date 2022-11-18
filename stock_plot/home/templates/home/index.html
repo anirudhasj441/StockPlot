@@ -62,26 +62,27 @@
         </div>
     </div>
 </section>
-{% if watchlists|length > 0 %}
+{% if request.user.is_authenticated %}
 <section id="watchlists" class="sub-section">
-    <div class="container-fluid py-3">
-        <h2 class="text-center">Watchlist</h2>
-        <div class="d-flex w-100 watchlists-container" style="overflow-x: auto;">
-            {% for stock in watchlists %}
-            <div class="ms-3" style="width: 200px; min-width: 200px;">
-                <div class="card w-100 py-3" @click="showStock('{{stock.symbol}}', '{{stock.name}}', '{{stock.currency}}')">
+    <h2 class="text-center">Watchlist</h2>
+    <div class="container-fluid py-3" style="position: relative; min-height: 150px;">
+        <div v-if="watchlist_loading" id="watchlist-loading"></div>
+        <div class="d-flex w-100 watchlists-container" style="overflow-x: auto">
+            <h3 v-if="watchlists.length == 0" class="text-muted mx-auto">Seems you don't add stock in watchlist!!!</h3>
+            <div v-for="stock in watchlists" class="ms-3" style="width: 200px; min-width: 200px;">
+                <div class="card w-100 py-3" @click="showStock(stock.symbol, stock.name, stock.currency)">
                     <div class="card-body">
-                        <h5 class="text-center mb-2 card-title">{{stock.symbol}}</h5>
+                        <h5 class="text-center mb-2 card-title">[[stock.symbol]]</h5>
                         <div class="d-flex align-items-center justify-content-between">
-                            <h6 class="card-subtitle text-muted">{{stock.price}} {{stock.currency}}</h6>
-                            <h6 class="card-subtitle {% if stock.diff > 0 %}text-success{% else %}text-danger{% endif %}">{% if stock.diff > 0 %}+{% endif %}{{stock.diff}}</h6>
+                            <h6 class="card-subtitle text-muted">[[stock.price]] [[stock.currency]]</h6>
+                            <h6 class="card-subtitle" :class="stock.diff>0 ? 'text-success' : 'text-danger'"><span v-if="stock.diff>0">+</span>[[stock.diff]]</h6>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 </section>
 {% endif %}
+
 {% endblock body %}
