@@ -1,98 +1,123 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block css %}
-    
+
 {% endblock css %}
 {% block title %}{{name}} - StockPlot{% endblock title %}
 {% block body %}
-    <div class="container py-5">
-        <div id="preloader" v-if="loading"></div>
-        <div id="sub-preloader" v-if="graph_loading"></div>
+<div class="container py-5">
+    <div id="preloader" v-if="loading"></div>
+    <div id="sub-preloader" v-if="graph_loading"></div>
 
-        {% include 'search_box.html' %}
-        <button v-if="!added_watchlist" :disabled="watchlist_btn_loading" class="my-3 btn btn-primary d-flex align-items-center justify-content-center ms-auto" style="width: 125px;" @click="addToWatchlist('{{symbol}}')">
-            <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
-            <span v-else class="d-flex align-items-center justify-content-between w-100">
-                Watchlist
-                <span class="ms-2 material-symbols-outlined">
-                    add_circle
-                </span>
-            </span>
-        </button>
-        <button v-else :disabled="watchlist_btn_loading" class="my-3 btn btn-primary d-flex align-items-center justify-content-center ms-auto" style="width: 125px;" @click="removeFromWatchlist('{{symbol}}')">
-            <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
-            <span v-else class="d-flex align-items-center justify-content-between w-100">
-                Watchlist
-                <span class="material-symbols-outlined">
-                    cancel
-                </span>
-            </span>
-        </button>
-        <div v-if="plot_added">
-            <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
-                <div class="col-lg-6 col-sm-12 col-md-6">
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''" @click="setPeriod('1d')">1D</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''" @click="setPeriod('5d')">5D</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''" @click="setPeriod('1mo')">1M</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''" @click="setPeriod('6mo')">6M</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''" @click="setPeriod('ytd')">YTD</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''" @click="setPeriod('1y')">1Y</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''" @click="setPeriod('5y')">5Y</button>
-                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''" @click="setPeriod('max')">MAX</button>
+    {% include 'search_box.html' %}
+    <button v-if="!added_watchlist" :disabled="watchlist_btn_loading"
+        class="my-3 btn text-primary d-flex align-items-center justify-content-center ms-auto"
+        @click="addToWatchlist('{{symbol}}')">
+        <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+        <i v-else class="fa fa-2x fa-bookmark-o"></i>
+    </button>
+    <button v-else :disabled="watchlist_btn_loading"
+        class="my-3 btn d-flex align-items-center justify-content-center shadow-none ms-auto text-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#watchlist-remove"
+    >
+        <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+        <i v-else class="fa fa-2x fa-bookmark"></i>
+    </button>
+    <div class="modal" id="watchlist-remove" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 400px;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5>Do you wish to remove this stock from watchlist?</h5>
                 </div>
-                <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
-                    <p class="fs-1">[[latest_price]]</p> <p class="fs-4 text-muted ms-2">[[currency]]</p>
+                <div class="modal-footer py-1">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal" @click="removeFromWatchlist('{{symbol}}')">Yes</button>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
-                    <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' : 'show_chart']]</span>
-                </button>
             </div>
         </div>
-        <div id="plot"></div>
-        <input type="hidden" id="stock-page" value="true">
-        <input type="hidden" id="symbol" value="{{symbol}}">
-        <input type="hidden" id="name" value="{{name}}">
-        <input type="hidden" id="currency" value="{{currency}}">
     </div>
-    <section id="news" class="sub-section" v-if="news.length > 0">
-        <div class="container py-3">
-            <h2 class="text-center">{{symbol}} News</h2>
-            <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-touch="true" data-bs-interval="false">
-                <div class="carousel-indicators">
-                    <button v-for="slide in news_slides+1" type="button" data-bs-target="#news-slider" :data-bs-slide-to="slide-1" :class="slide == 1 ? 'active' : ''" aria-current="true" :aria-label="'Slide' + slide"></button>
-                </div>
-                <div class="carousel-inner">
-                    <div v-for="slide in news_slides+1" :key="slide" class="carousel-item" :class="(slide == 1) ? 'active' : ''">
-                        <div class="row">
-                            <div v-for="news_item in news.slice(2*(slide-1), (2*(slide-1))+2)" class="col-6">
-                                <div class="card">
-                                    <div style="height: 150px; display:flex; align-items:center">
-                                        <img :src="news_item.thumbnail" class="card-img-top" alt="..." style="max-height: 100%">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">[[news_item.title]]</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted text-end">[[news_item.publish_date]]</h6>
-                                        <a :href="'/stock/news_content/' + news_item.id" class="btn btn-primary">Read More</a>
-                                    </div>
+    <div v-if="plot_added">
+        <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
+            <div class="col-lg-6 col-sm-12 col-md-6">
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''"
+                    @click="setPeriod('1d')">1D</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''"
+                    @click="setPeriod('5d')">5D</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''"
+                    @click="setPeriod('1mo')">1M</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''"
+                    @click="setPeriod('6mo')">6M</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''"
+                    @click="setPeriod('ytd')">YTD</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''"
+                    @click="setPeriod('1y')">1Y</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''"
+                    @click="setPeriod('5y')">5Y</button>
+                <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''"
+                    @click="setPeriod('max')">MAX</button>
+            </div>
+            <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
+                <p class="fs-1">[[latest_price]]</p>
+                <p class="fs-4 text-muted ms-2">[[currency]]</p>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
+                <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' :
+                    'show_chart']]</span>
+            </button>
+        </div>
+    </div>
+    <div id="plot"></div>
+    <input type="hidden" id="stock-page" value="true">
+    <input type="hidden" id="symbol" value="{{symbol}}">
+    <input type="hidden" id="name" value="{{name}}">
+    <input type="hidden" id="currency" value="{{currency}}">
+</div>
+<section id="news" class="sub-section" v-if="news.length > 0">
+    <div class="container py-3">
+        <h2 class="text-center">{{symbol}} News</h2>
+        <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-touch="true"
+            data-bs-interval="false">
+            <div class="carousel-indicators">
+                <button v-for="slide in news_slides+1" type="button" data-bs-target="#news-slider"
+                    :data-bs-slide-to="slide-1" :class="slide == 1 ? 'active' : ''" aria-current="true"
+                    :aria-label="'Slide' + slide"></button>
+            </div>
+            <div class="carousel-inner">
+                <div v-for="slide in news_slides+1" :key="slide" class="carousel-item"
+                    :class="(slide == 1) ? 'active' : ''">
+                    <div class="row">
+                        <div v-for="news_item in news.slice(2*(slide-1), (2*(slide-1))+2)" class="col-6">
+                            <div class="card">
+                                <div style="height: 150px; display:flex; align-items:center">
+                                    <img :src="news_item.thumbnail" class="card-img-top" alt="..."
+                                        style="max-height: 100%">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">[[news_item.title]]</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted text-end">[[news_item.publish_date]]</h6>
+                                    <a :href="'/stock/news_content/' + news_item.id" class="btn btn-primary">Read
+                                        More</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#news-slider" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#news-slider" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#news-slider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#news-slider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock body %}
 {% block script %}
-    
+
 {% endblock script %}
