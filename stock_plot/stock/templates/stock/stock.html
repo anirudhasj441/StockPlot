@@ -13,7 +13,7 @@
     <button v-if="!added_watchlist" :disabled="watchlist_btn_loading"
         class="my-3 btn text-primary d-flex align-items-center justify-content-center ms-auto"
         @click="addToWatchlist('{{symbol}}')">
-        <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+        <i v-if="watchlist_btn_loading" class="text-primary fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
         <i v-else class="fa fa-2x fa-bookmark-o"></i>
     </button>
     <button v-else :disabled="watchlist_btn_loading"
@@ -21,7 +21,7 @@
         data-bs-toggle="modal"
         data-bs-target="#watchlist-remove"
     >
-        <i v-if="watchlist_btn_loading" class="text-white fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
+        <i v-if="watchlist_btn_loading" class="text-primary fa fa-spinner fa-spin" style="font-size: 1.3rem"></i>
         <i v-else class="fa fa-2x fa-bookmark"></i>
     </button>
     <div class="modal" id="watchlist-remove" tabindex="-1">
