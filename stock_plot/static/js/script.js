@@ -270,6 +270,8 @@ const app = Vue.createApp({
                 const response = JSON.parse(xhr.response);
                 if(response.status == "success"){
                     this.added_watchlist = false;
+                    var modal = new bootstrap.Modal(document.getElementById("watchlist-remove"));
+                    modal.hide();
                 }
             }.bind(this);
             xhr.send(JSON.stringify(data));
