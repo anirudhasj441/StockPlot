@@ -40,6 +40,11 @@ const app = Vue.createApp({
             password_error_message: "",
             fname_error_message: "",
             lname_error_message: "",
+            day_low: 0,
+            day_high: 0,
+            fifty_two_week_high: 0,
+            fifty_two_week_low: 0,
+            current_price: 0,
             news_slides: 0,
             search_results: [],
             data: [],
@@ -124,6 +129,7 @@ const app = Vue.createApp({
                 var name = document.getElementById("name").value;
                 var currency = document.getElementById("currency").value;
                 this.checkStockInWatchlist(symbol);
+                this.priceTrack(symbol);
                 this.showPlot(symbol, name, currency);
                 this.getNews(symbol);
             }
@@ -306,8 +312,35 @@ const app = Vue.createApp({
             }.bind(this)
             xhr.send();
         },
+        priceTrack: function(symbol){
+            const url = "/stock/price_track";
+            const data = {
+                symbol: symbol
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("post", url);
+            xhr.onload = () => {
+                var response = JSON.parse(xhr.response);
+                if(response.status == "success"){
+                    this.day_low = response.day_low;
+                    this.day_high = response.day_high;
+                    this.fifty_two_week_low = response.fifty_two_week_low;
+                    this.fifty_two_week_high = response.fifty_two_week_high;
+                    this.current_price = response.current_price;
+                    var day_diff = this.day_high - this.day_low;
+                    var day_per = (this.current_price - this.day_low) / day_diff * 100;
+                    var fifty_two_week_diff = (this.fifty_two_week_high - this.fifty_two_week_low);
+                    var fifty_two_week_per = (this.current_price - this.fifty_two_week_low) / fifty_two_week_diff * 100;
+                    day_cur_el = document.getElementById("day_current")
+                    day_cur_el.style.left = day_per + "%";
+                    day_cur_el = document.getElementById("fifty_two_week_current")
+                    day_cur_el.style.left = fifty_two_week_per + "%";
+                }
+            }
+            xhr.send(JSON.stringify(data))
+        },
         showPlot: function(symbol, name, currency, auto_reload=false){
-            if(!auto_reload && this.plot_added){
+            if(!auto_reload){
                 this.graph_loading = true;
             }
             this.show_results = false;

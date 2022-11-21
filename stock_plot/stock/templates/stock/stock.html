@@ -7,8 +7,6 @@
 {% block body %}
 <div class="container py-5">
     <div id="preloader" v-if="loading"></div>
-    <div id="sub-preloader" v-if="graph_loading"></div>
-
     {% include 'search_box.html' %}
     <button v-if="!added_watchlist" :disabled="watchlist_btn_loading"
         class="my-3 btn text-primary d-flex align-items-center justify-content-center ms-auto"
@@ -37,45 +35,115 @@
             </div>
         </div>
     </div>
-    <div v-if="plot_added">
-        <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
-            <div class="col-lg-6 col-sm-12 col-md-6">
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''"
-                    @click="setPeriod('1d')">1D</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''"
-                    @click="setPeriod('5d')">5D</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''"
-                    @click="setPeriod('1mo')">1M</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''"
-                    @click="setPeriod('6mo')">6M</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''"
-                    @click="setPeriod('ytd')">YTD</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''"
-                    @click="setPeriod('1y')">1Y</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''"
-                    @click="setPeriod('5y')">5Y</button>
-                <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''"
-                    @click="setPeriod('max')">MAX</button>
+    <div id="plot-container" style="position: relative">
+        <div id="sub-preloader" v-if="graph_loading"></div>
+        <div v-if="plot_added">
+            <div class="row align-items-center" style="flex-wrap: wrap-reverse;">
+                <div class="col-lg-6 col-sm-12 col-md-6">
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1d') ? 'btn-primary' : ''"
+                        @click="setPeriod('1d')">1D</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5d') ? 'btn-primary' : ''"
+                        @click="setPeriod('5d')">5D</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1mo') ? 'btn-primary' : ''"
+                        @click="setPeriod('1mo')">1M</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '6mo') ? 'btn-primary' : ''"
+                        @click="setPeriod('6mo')">6M</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'ytd') ? 'btn-primary' : ''"
+                        @click="setPeriod('ytd')">YTD</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '1y') ? 'btn-primary' : ''"
+                        @click="setPeriod('1y')">1Y</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == '5y') ? 'btn-primary' : ''"
+                        @click="setPeriod('5y')">5Y</button>
+                    <button class="btn btn-sm px-3 shadow-none" :class="(period == 'max') ? 'btn-primary' : ''"
+                        @click="setPeriod('max')">MAX</button>
+                </div>
+                <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
+                    <p class="fs-1">[[latest_price]]</p>
+                    <p class="fs-4 text-muted ms-2">[[currency]]</p>
+                </div>
             </div>
-            <div class="d-flex justify-content-end align-items-baseline col-lg-6 col-md-6 col-sm-12">
-                <p class="fs-1">[[latest_price]]</p>
-                <p class="fs-4 text-muted ms-2">[[currency]]</p>
+            <div class="d-flex justify-content-end">
+                <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
+                    <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' :
+                        'show_chart']]</span>
+                </button>
             </div>
         </div>
-        <div class="d-flex justify-content-end">
-            <button class="btn-graph-type btn text-primary d-flex shadow-none" @click="updateChartType">
-                <span class="material-symbols-outlined">[[(chart_type == 'line_chart') ? 'candlestick_chart' :
-                    'show_chart']]</span>
-            </button>
-        </div>
+        <div id="plot" style="height: 500px;"></div>
     </div>
-    <div id="plot"></div>
     <input type="hidden" id="stock-page" value="true">
     <input type="hidden" id="symbol" value="{{symbol}}">
     <input type="hidden" id="name" value="{{name}}">
     <input type="hidden" id="currency" value="{{currency}}">
 </div>
-<section id="news" class="sub-section" v-if="news.length > 0">
+<section id="overview" class="sub-section">
+    <h2 class="text-center">Overview</h2>
+    <div class="container">
+        <div class="row gx-md">
+            <div class="col-lg-6 col-md-6 col-ms-12">
+                <div class="d-flex justify-content-center align-items-center" style="height: 200px">
+                    <div class="track">
+                        <div class="values">
+                            <span class="low">
+                                <small>
+                                    Today's Low
+                                </small>
+                                <p>
+                                    [[day_low]] INR
+                                </p>
+                            </span>
+                            <span class="current text-center" id="day_current">
+                                <p class="text-center my-0">
+                                    [[current_price]] INR
+                                </p>
+                                <i class="fa fa-chevron-down"></i>
+                            </span>
+                            <span class="high">
+                                <small>
+                                    Todya's High
+                                </small>
+                                <p class="text-end">
+                                    [[day_high]] INR
+                                </p>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-ms-12">
+                <div class="d-flex justify-content-center align-items-center" style="height: 200px">
+                    <div class="track">
+                        <div class="values">
+                            <span class="low">
+                                <small>
+                                    52 Weeks Low
+                                </small>
+                                <p>
+                                    [[fifty_two_week_low]] INR
+                                </p>
+                            </span>
+                            <span class="current text-center" id="fifty_two_week_current">
+                                <p class="text-center my-0">
+                                    [[current_price]] INR
+                                </p>
+                                <i class="fa fa-chevron-down"></i>
+                            </span>
+                            <span class="high">
+                                <small>
+                                    52 Weeks High
+                                </small>
+                                <p class="text-end">
+                                    [[fifty_two_week_high]] INR
+                                </p>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="news" v-if="news.length > 0">
     <div class="container py-3">
         <h2 class="text-center">{{symbol}} News</h2>
         <div id="news-slider" class="carousel carousel-dark slide" data-bs-ride="carousel" data-bs-touch="true"
