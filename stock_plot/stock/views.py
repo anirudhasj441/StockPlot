@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.db import IntegrityError
 from django.db.models import Q
 from django.utils import timezone
+import yfinance as yf
 import requests
 import logging
 import json
@@ -241,5 +242,33 @@ def getNews(request):
         logger.error(str(e))
     else:
         response["status"] = "status"
+    finally:
+        return JsonResponse(response, safe=False)
+
+@csrf_exempt
+def priceTrack(request):
+    try:
+        response = {}
+        data = json.loads(request.body)
+        symbol = data["symbol"]
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        current_price = info["currentPrice"]
+        day_low = info["dayLow"]
+        day_high = info["dayHigh"]
+        fifty_two_week_low = info["fiftyTwoWeekLow"]
+        fifty_two_week_high = info["fiftyTwoWeekHigh"]
+        response = {
+            "current_price": current_price,
+            "day_low": day_low,
+            "day_high": day_high,
+            "fifty_two_week_low": fifty_two_week_low,
+            "fifty_two_week_high": fifty_two_week_high
+        }
+    except Exception as e:
+        response["status"] = "failed"
+        response["message"] = "Error: " + str(e)
+    else: 
+        response["status"] = "success"
     finally:
         return JsonResponse(response, safe=False)
