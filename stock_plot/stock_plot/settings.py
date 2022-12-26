@@ -192,3 +192,5 @@ LOGGING = {
 CRONJOBS = [
     ('0 */12 * * *', 'stock.views.saveNewsInDb')
 ]
+
+#demo change
