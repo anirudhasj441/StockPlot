@@ -272,3 +272,6 @@ def priceTrack(request):
         response["status"] = "success"
     finally:
         return JsonResponse(response, safe=False)
+
+def getScreeners(request):
+    pass
