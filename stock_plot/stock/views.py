@@ -252,12 +252,12 @@ def priceTrack(request):
         data = json.loads(request.body)
         symbol = data["symbol"]
         ticker = yf.Ticker(symbol)
-        info = ticker.info
-        current_price = info["currentPrice"]
-        day_low = info["dayLow"]
-        day_high = info["dayHigh"]
-        fifty_two_week_low = info["fiftyTwoWeekLow"]
-        fifty_two_week_high = info["fiftyTwoWeekHigh"]
+        info = ticker.fast_info
+        current_price = info["last_price"]
+        day_low = info["day_low"]
+        day_high = info["day_high"]
+        fifty_two_week_low = info["year_low"]
+        fifty_two_week_high = info["year_high"]
         response = {
             "current_price": current_price,
             "day_low": day_low,

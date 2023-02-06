@@ -153,8 +153,8 @@ def getWatchlist(request):
 
             for stock in watchlist_stocks:
                 ticker = yf.Ticker(stock.symbol)
-                price = ticker.info["currentPrice"]
-                open_price = ticker.info["regularMarketOpen"]
+                price = round(ticker.fast_info["last_price"], 2)
+                open_price = ticker.fast_info["open"]
                 diff = round(price - open_price, 2)
                 stock_data = {
                     "symbol": stock.symbol,
