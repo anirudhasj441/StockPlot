@@ -206,7 +206,7 @@ def getNews(request):
                 id = news_content["id"]
                 title = news_content["title"]
                 pub_date = news_content["pubDate"]
-                thumbnail = news_content["thumbnail"]["resolutions"][0]["url"]
+                thumbnail = news_content["thumbnail"]["resolutions"][0]["url"] if news_content["thumbnail"] is not None else None
                 
                 previous_news = StockNews.objects.filter(news_id = id)
                 if previous_news:
