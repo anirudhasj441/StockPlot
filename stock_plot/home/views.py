@@ -17,6 +17,9 @@ def index(request):
     
     return render(request, 'home/index.html')
 
+def watchlist(request):
+    return render(request, 'home/watchlist.html')
+
 # APIs 
 
 @csrf_exempt

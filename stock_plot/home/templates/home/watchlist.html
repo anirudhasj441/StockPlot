@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if request.user.is_authenticated %}
+<section id="watchlists" class="py-5">
+    {% include 'search_box.html' %}
+    <h2 class="text-center my-3">Watchlist</h2>
+    <div class="container py-3" style="position: relative; min-height: 150px;">
+        <div v-if="watchlist_loading" id="watchlist-loading"></div>
+        <div>
+            <h3 v-if="watchlists.length == 0" class="text-muted mx-auto">Seems you don't add stock in watchlist!!!</h3>
+            <div v-for="stock in watchlists" class="ms-3">
+                <div class="card w-100 py-2" @click="showStock(stock.symbol, stock.name, stock.currency)">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto">
+                                <h5 class="mb-1 card-title">[[stock.symbol]]</h5>
+                            </div>
+                            <div class="col-auto ms-auto">
+                                <div class="ms-auto text-right" style="width: max-content;display:flex; flex-direction:column; align-items:end;">
+                                    <h6 class="card-subtitle text-muted">[[stock.price]] [[stock.currency]]</h6>
+                                    <div class="d-flex align-items-baseline">
+                                        <h6 class="card-subtitle text-right" :class="stock.diff>0 ? 'text-success' : 'text-danger'"><span v-if="stock.diff>0">+</span>[[stock.diff]]</h6><i class="fa ms-2" :class="stock.diff> 0 ? 'fa-arrow-up text-success' : 'fa-arrow-down text-danger'"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock body %}
