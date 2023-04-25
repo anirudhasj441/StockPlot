@@ -2,14 +2,14 @@
 
 {% block body %}
 {% if request.user.is_authenticated %}
-<section id="watchlists" class="py-5">
+<section id="watchlists" class="container py-5">
     {% include 'search_box.html' %}
     <h2 class="text-center my-3">Watchlist</h2>
-    <div class="container py-3" style="position: relative; min-height: 150px;">
+    <div class="py-3" style="position: relative; min-height: 150px;">
         <div v-if="watchlist_loading" id="watchlist-loading"></div>
         <div>
             <h3 v-if="watchlists.length == 0" class="text-muted mx-auto">Seems you don't add stock in watchlist!!!</h3>
-            <div v-for="stock in watchlists" class="ms-3">
+            <div v-for="stock in watchlists">
                 <div class="card w-100 py-2" @click="showStock(stock.symbol, stock.name, stock.currency)">
                     <div class="card-body">
                         <div class="row">
