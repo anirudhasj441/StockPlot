@@ -11,4 +11,5 @@ urlpatterns = [
     path('remove_watchlist', views.removeFromWatchlist),
     path('check_watchlist', views.checkStockInWatchlist),
     path('get_wathlist', views.getWatchlist),
+    path('watchlist', views.watchlist)
 ]
